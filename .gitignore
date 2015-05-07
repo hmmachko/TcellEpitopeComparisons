@@ -4,3 +4,5 @@ test/
 *.pyc
 *.trees
 *.log
+slurm*
+test*.tre
