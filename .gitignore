@@ -1,0 +1,6 @@
+test/
+._*
+.DS_Store
+*.pyc
+*.trees
+*.log

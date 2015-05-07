@@ -1,0 +1,83 @@
+
+
+IMPORTANT WARNING: Sequences 2011_12_30_cdsAFU08954_A/swine/Illinois/A01240820/2011_M2_H1N2 and 2012_01_03_cdsAFU10194_A/swine/Nebraska/A01240562/2012_M2_H1N1 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 2010_03_28_cdsAFN08033_A/swine/NorthCarolina/A01076202/2010_M2_H1N2 and 2008_09_10_cdsAEO91857_A/swine/Minnesota/02324/2008_M2_H1N2 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 1931___cdsACV52103_A/swine/USA/1976/1931_M2_H1N1 and 1946___cdsACU44853_A/swine/Shope/15/1946_M2_H1N1 are exactly identical
+
+IMPORTANT WARNING
+Found 3 sequences that are exactly identical to other sequences in the alignment.
+Normally they should be excluded from the analysis.
+
+An alignment file with sequence duplicates removed has already
+been printed to file /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/cds_aligned.fasta.reduced
+
+
+This is RAxML version 8.1.3 released by Alexandros Stamatakis on August 13 2014.
+
+With greatly appreciated code contributions by:
+Andre Aberer      (HITS)
+Simon Berger      (HITS)
+Alexey Kozlov     (HITS)
+Kassian Kobert    (HITS)
+David Dao         (KIT and HITS)
+Nick Pattengale   (Sandia)
+Wayne Pfeiffer    (SDSC)
+Akifumi S. Tanabe (NRIFS)
+
+Alignment has 127 distinct alignment patterns
+
+Proportion of gaps and completely undetermined characters in this alignment: 0.08%
+
+RAxML rapid hill-climbing mode
+
+Using 1 distinct models/data partitions with joint branch length optimization
+
+
+Executing 1 inferences on the original alignment using 1 distinct randomized MP trees
+
+All free model parameters will be estimated by RAxML
+ML estimate of 25 per site rate categories
+
+Likelihood of final tree will be evaluated and optimized under GAMMA
+
+GAMMA Model parameters will be estimated up to an accuracy of 0.1000000000 Log Likelihood units
+
+Partition: 0
+Alignment Patterns: 127
+Name: No Name Provided
+DataType: DNA
+Substitution Matrix: GTR
+
+
+
+
+RAxML was called as follows:
+
+raxmlHPC-SSE3 -w /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/RAxML_output/individual/ -n prelimTree -p 1 -m GTRCAT -s /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/cds_aligned.fasta --no-bfgs 
+
+
+Partition: 0 with name: No Name Provided
+Base frequencies: 0.268 0.194 0.265 0.273 
+
+Inference[0]: Time 13.390910 CAT-based likelihood -1950.664558, best rearrangement setting 25
+alpha[0]: 1.000000 rates[0] ac ag at cg ct gt: 1.137645 4.808870 0.584607 0.013281 5.457901 1.000000 
+
+
+Conducting final model optimizations on all 1 trees under GAMMA-based models ....
+
+Inference[0] final GAMMA-based Likelihood: -2183.478341 tree written to file /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/RAxML_output/individual/RAxML_result.prelimTree
+
+
+Starting final GAMMA-based thorough Optimization on tree 0 likelihood -2183.478341 .... 
+
+Final GAMMA-based Score of best tree -2183.081881
+
+Program execution info written to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/RAxML_output/individual/RAxML_info.prelimTree
+Best-scoring ML tree written to: /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/M2/RAxML_output/individual/RAxML_bestTree.prelimTree
+
+Overall execution time: 18.756038 secs or 0.005210 hours or 0.000217 days
+

@@ -1,0 +1,123 @@
+Beginning execution of epitopefinder_getepitopes.py
+
+Read input arguments from /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/cd8epitopefinderinfile.txt
+Read the following key / value pairs:
+iedbfile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/inputfiles/IEDB_Influenza_Tcell_compact_2014-10-09.csv
+epitopelength 8 12
+mhcclass I
+epitopeslistfile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/cd8combinedepitopeslist.csv
+purgeredundantoverlap 8
+purgeredundant MHCgroup
+epitopesbysitefile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/cd8combinedepitopesbysite.csv
+targetprotsfile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/combined_prot_aligned.fasta
+musclepath /usr/bin/
+maxmismatches 1
+supertypesfile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/inputfiles/supertype_classification.txt
+
+Reading epitopes from iedbfile /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/inputfiles/IEDB_Influenza_Tcell_compact_2014-10-09.csv...
+Read a total of 2601 epitopes.
+
+Now assigning alleles to class / gene / supertype / group.
+Summary of allele assignments for the 2601 epitopes.
+1080 of 2601 epitopes were assigned to MHC class I
+  Of these, 933 of 1080 were assigned an MHC gene (A, B)
+  Of these, 889 of 1080 were assigned an MHC supertype (A01, A02, A03, A24, B07, B08, B27, B44, B58, B62)
+  Of these, 621 of 1080 were assigned an MHC group within the MHC gene
+1325 of 2601 epitopes were assigned to MHC class II
+  Of these, 783 of 1325 were assigned an MHC gene (DPB1, DQB1, DRB1, DRB3, DRB4, DRB5)
+  Of these, 711 of 1325 were assigned an MHC group within the MHC gene
+196 of 2601 epitopes were not assigned a MHC class.
+
+We are searcing for MHC class I epitopes. We have 1080 such epitopes.
+
+After restricting to epitopes with lengths >= 8 and <= 12, we have 959 epitopes remaining.
+
+Now searching for matches for each epitope in the target protein sequences. These sequences are:
+  1933_04_16_cdsACV49542_A/UnitedKingdom/1/1933_PB1_H1N1
+  1953___cdsADT78938_A/Netherlands/002W1/1953_PB1_H1N1
+  1943___cdsABO38062_A/AA/Marton/1943_PB1_H1N1
+  1954___cdsADT78873_A/Netherlands/001H1/1954_PB1_H1N1
+  1936___cdsABO38359_A/Henry/1936_PB1_H1N1
+  1956___cdsADT78856_A/Netherlands/001B1/1956_PB1_H1N1
+  1947___cdsAGQ47773_A/FortMonmouth/1-JY2/1947_PB1_H1N1
+  1956___cdsADT78948_A/Netherlands/002Z1/1956_PB1_H1N1
+  1943___cdsAGQ47808_A/Weiss/JY2/1943_PB1_H1N1
+  1935___cdsABN59420_A/Alaska/1935_PB1_H1N1
+  1951___cdsADT79105_A/Liverpool/1951_PB1_H1N1
+  1948___cdsADT79094_A/Hemsbury/1948_PB1_H1N1
+  1947___cdsACV49575_A/FortMonmouth/1/1947_PB1_H1N1
+  1918___cdsABA55039_A/BrevigMission/1/1918_PB1_H1N1
+  1950___cdsABP49324_A/Albany/4836/1950_PB1_H1N1
+  1943___cdsABO38381_A/Iowa/1943_PB1_H1N1
+  1947___cdsABD77815_A/FortMonmouth/1/1947_PB1_H1N1
+  1934___cdsADX99655_A/PuertoRico/8-WG/1934_PB1_H1N1
+  1951___cdsABP49489_A/Albany/12/1951_PB1_H1N1
+  1942___cdsABD62850_A/Bellamy/1942_PB1_H1N1
+  1951___cdsABQ01319_A/Albany/1618/1951_PB1_H1N1
+  1954___cdsABD60974_A/Malaysia/1954_PB1_H1N1
+  1946___cdsAGQ47785_A/Cameron/JY2/1946_PB1_H1N1
+  1950___cdsAGQ47761_A/FortWarren/50-JY2/1950_PB1_H1N1
+  1957___cdsABD15267_A/Denver/1957_PB1_H1N1
+  1949___cdsABN59442_A/Roma/1949_PB1_H1N1
+  1942___cdsAGO00274_A/Bellamy/JY2/1942_PB1_H1N1
+  1957___cdsAFV53268_A/Kw/1/1957_PB1_H1N1
+  1956___cdsAAA43641_A/Beijing/11/1956_PB1_H1N1
+  1940___cdsAGO00286_A/Hickox/JY2/1940_PB1_H1N1
+  1935___cdsAGQ47749_A/BH/JY2/1935_PB1_H1N1
+  1946___cdsABD79120_A/Cameron/1946_PB1_H1N1
+  1933___cdsABF21250_A/Wilson-Smith/1933_PB1_H1N1
+  1935___cdsAGQ47856_A/Melbourne/JY2/1935_PB1_H1N1
+  1948___cdsABN59409_A/Albany/4835/1948_PB1_H1N1
+  1945___cdsABP49335_A/AA/Huston/1945_PB1_H1N1
+  1977___cdsABR28578_A/swine/Tennessee/79/1977_PB1_H1N1
+  1988___cdsACQ84505_A/Swine/Indiana/1726/1988_PB1_H1N1
+  1981___cdsABW36363_A/swine/Ontario/6/1981_PB1_H1N1
+  1991___cdsABW71529_A/swine/Iowa/24297/1991_PB1_H1N1
+  1961___cdsACD85162_A/swine/Wisconsin/1/1961_PB1_H1N1
+  1977___cdsABU80207_A/swine/Tennessee/61/1977_PB1_H1N1
+  1966___cdsABV82603_A/swine/Wisconsin/2/1966_PB1_H1N1
+  1990___cdsACI26612_A/swine/Memphis/1/1990_PB1_H1N1
+  1977___cdsABR15871_A/swine/Tennessee/49/1977_PB1_H1N1
+  1981___cdsABR28666_A/swine/Ontario/4/1981_PB1_H1N1
+  1931___cdsACV52120_A/swine/USA/1976-MA/1931_PB1_H1N1
+  1980___cdsABR28721_A/swine/Wisconsin/11/1980_PB1_H1N1
+  1976___cdsABQ45466_A/swine/Iowa/1/1976_PB1_H1N1
+  1976___cdsABQ45455_A/swine/Tennessee/17/1976_PB1_H1N1
+  1991___cdsABY84692_A/swine/California/T9001707/1991_PB1_H1N1
+  1970___cdsABR28732_A/swine/Wisconsin/2/1970_PB1_H1N1
+  1998___cdsABB86950_A/swine/Wisconsin/464/98_PB1_H1N1
+  1987___cdsABX58654_A/swine/Iowa/2/1987_PB1_H1N1
+  1980___cdsABR28765_A/swine/Wisconsin/8/1980_PB1_H1N1
+  1957___cdsABV82581_A/swine/Wisconsin/1/1957_PB1_H1N1
+  1976___cdsABQ45541_A/swine/Tennessee/19/1976_PB1_H1N1
+  1980___cdsABR28754_A/swine/Wisconsin/661/1980_PB1_H1N1
+  1988___cdsABS50129_A/swine/Iowa/31483/1988_PB1_H1N1
+  1981___cdsABS49940_A/swine/Ontario/1/1981_PB1_H1N1
+  1978___cdsABY51212_A/swine/Tennessee/4/1978_PB1_H1N1
+  1931___cdsACV52109_A/swine/USA/1976/1931_PB1_H1N1
+  1990___cdsAEM60099_A/swine/Iowa/3421/1990_PB1_H1N1
+  1985___cdsABW86604_A/swine/Iowa/2/1985_PB1_H1N1
+  1986___cdsABY81434_A/swine/Iowa/1/1986_PB1_H1N1
+  1988___cdsABR29603_A/swine/Iowa/17672/1988_PB1_H1N1
+  1978___cdsABX58665_A/swine/Tennessee/3/1978_PB1_H1N1
+  1978___cdsABU80273_A/swine/Tennessee/10/1978_PB1_H1N1
+  1975___cdsABR28611_A/swine/Illinois/1/1975_PB1_H1N1
+  1991___cdsABR29573_A/swine/Maryland/23239/1991_PB1_H1N1
+  1931___cdsAAA43646_A/swine/1976/1931_PB1_H1N1
+  1979___cdsABR28644_A/swine/Minnesota/5892-7/1979_PB1_H1N1
+  1971___cdsABR28710_A/swine/Wisconsin/1/1971_PB1_H1N1
+  1997___cdsABB86958_A/swine/Wisconsin/125/97_PB1_H1N1
+  1987___cdsABS50119_A/swine/Iowa/1/1987_PB1_H1N1
+  1997___cdsABB86955_A/swine/Wisconsin/238/97_PB1_H1N1
+  1987___cdsABR29583_A/swine/Kansas/3228/1987_PB1_H1N1
+  1975___cdsABR28688_A/swine/Tennessee/1/1975_PB1_H1N1
+Found 75 epitopes that aligned with no gaps and <= 1 mismatches.
+
+Now purging as redundant epitopes that have the same MHCgroup and >= 8 residues of overlap in their alignment to the target protein.
+Found a total of 42 unique epitopes.
+
+Writing list of the unique and redundant epitopes to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/cd8combinedepitopeslist.csv
+
+Writing list of epitopes per site to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/PB1_P1/cd8combinedepitopesbysite.csv
+
+Script is complete.

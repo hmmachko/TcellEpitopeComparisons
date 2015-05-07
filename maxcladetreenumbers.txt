@@ -1,0 +1,304 @@
+Last login: Fri Mar 20 10:00:58 on ttys000
+dhcp025125:~ Machkovech$ ssh hmachkov@rhino
+hmachkov@rhino's password: 
+Permission denied, please try again.
+hmachkov@rhino's password: 
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-39-generic x86_64)
+############################################################
+                    IMPORTANT NOTES:
+         (************ UPDATED ************)
+* This computer is intended for interactive scientific computing, 
+  development and for compute jobs that require > 20GB memory.
+
+* If you are running a long & CPU intensive job (> 1h) and your
+  job requires less than 20GB of memory you can start an inter-
+  active session to Gizmo by using the 'grab*' commands to get 
+  immediate access to a compute server with 1-12 cores.
+
+  However in most cases it will be more effective if you use the
+  sbatch commmand.
+
+* Shared folders can be found in:
+        /fh/fast
+        /fh/economy
+        /fh/secure
+
+* To use this system most effectively, please read this summary: 
+    http://scicomp.fhcrc.org/Gizmo%20Cluster%20Quickstart.aspx
+
+############################################################
+
+Least Used Systems as of Mon Mar 23 11:37:00 PDT 2015
+rhino04 rhino01 rhino03 rhino02
+
+ * Documentation:  https://help.ubuntu.com/
+
+5 packages can be updated.
+0 updates are security updates.
+
+Last login: Sat Mar 14 15:58:18 2015 from charon-vpn-011162.fhcrc.org
+hmachkov@rhino01:~$ cd /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/
+hmachkov@rhino01:/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons$ module avail
+
+---------------------------- /app/Modules/versions -----------------------------
+3.2.10
+
+----------------------- /app/Modules/3.2.10/modulefiles ------------------------
+dot         module-git  module-info modules     use.own
+
+--------------------------- /app/Modules/modulefiles ---------------------------
+anaconda/2.0.1         igv/2.3.26             python2/2.7.8
+aspera-connect/3.1.1   IGVTools/2.3.26        python3/3.4.1
+aspera-connect/3.5.1   java/jdk1.6.0_45       R/3.0.1
+bcl2fastq/1.8.4        java/jdk1.7.0_25       R/3.1.1
+bedops/2.4.2           java/jdk1.7.0_51       R/3.1.2(default)
+bedtools/2.21.0        java/jdk1.8.0_31       R/3.1.3
+blasr/2014.09.30       julia/0.3.0            R/devel
+blast/2.2.26           king/1.4               rclone/1.05
+blat/34                lastz/1.02.00          rclone/1.06
+boost/1.44.0           littler/0.1.5          rstudio/0.97.173
+boost/1.55.0           locuszoom/1.1          rstudio/0.97.551
+boost/1.56.0           matlab/R2013b          rstudio/0.98.1060
+bowtie/1.1.0           matlab/R2014a(default) rsync/3.1.1
+bowtie/1.1.1           matlab/R2014b          rtf2latex/2.2.2
+bowtie2/2.2.3          MEME/4.10.0            sage/6.3
+bowtie2/2.2.4          Modules/3.2.10         samtools/1.0
+bwa/0.7.10             NAMD/2.9               scadmin/1.0.0
+bwa/0.7.12             ncbi-blast/2.2.28+     seqtools/4.29
+casava/1.8.2           nco/4.4.5              sratoolkit/2.3.4-2
+clustalw/2.1           netcdf/4.3.2           sratoolkit/2.4.2
+cuda/cuda-5.0          new_fugue/2010-06-02   stata/13
+cuda/cuda-5.5          novocraft/3.02.02      SwiftFS/1.0
+cufflinks/2.2.1        null                   tophat/2.0.12
+cutadapt/1.1           olb/1.9.4              tophat/2.0.13
+emboss/6.6.0           perl/5.14.4            tpp/4.7.1
+FastQC/0.11.2          phase/2.1.1            ucsc/2014_01_21
+genetorrent/3.8.6      plink/1.90             vmd/1.9.1
+gmap-gsnap/2014-08-20  plinkseq/0.08          zlib/1.2.8
+gmap-gsnap/2014-12-16  psipred/3.4
+gmap-gsnap/2014-12-17  python/default
+hmachkov@rhino01:/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons$ module load python2
+hmachkov@rhino01:/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons$ module list
+Currently Loaded Modulefiles:
+  1) python2/2.7.8
+hmachkov@rhino01:/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons$ python2 mainepitopecomparison.py 
+NS1
+4
+plotting
+NS2
+6
+plotting
+M2
+7
+plotting
+PB2
+7
+plotting
+PA
+18
+plotting
+M1
+29
+plotting
+NP
+62
+plotting
+JRI not available. Using Java bivariate attributes
+
+              TreeAnnotator v1.8.1, 2002-2014
+                    MCMC Output analysis
+                             by
+           Andrew Rambaut and Alexei J. Drummond
+
+             Institute of Evolutionary Biology
+                  University of Edinburgh
+                     a.rambaut@ed.ac.uk
+
+               Department of Computer Science
+                   University of Auckland
+                  alexei@cs.auckland.ac.nz
+
+
+Reading trees (bar assumes 10,000 trees)...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+******************
+
+Total trees read: 3001
+Ignoring first 3000000 states (300 trees).
+Total unique clades: 234505
+
+Finding maximum credibility tree...
+Analyzing 2701 trees...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Best tree: STATE_21310000 (tree number 2132)
+Highest Log Clade Credibility: -1323.7335907585357
+Collecting node information...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Annotating target tree...
+Writing annotated tree....
+JRI not available. Using Java bivariate attributes
+
+              TreeAnnotator v1.8.1, 2002-2014
+                    MCMC Output analysis
+                             by
+           Andrew Rambaut and Alexei J. Drummond
+
+             Institute of Evolutionary Biology
+                  University of Edinburgh
+                     a.rambaut@ed.ac.uk
+
+               Department of Computer Science
+                   University of Auckland
+                  alexei@cs.auckland.ac.nz
+
+
+Reading trees (bar assumes 10,000 trees)...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+******************
+
+Total trees read: 3001
+Ignoring first 3000000 states (300 trees).
+Total unique clades: 47178
+
+Finding maximum credibility tree...
+Analyzing 2701 trees...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Best tree: STATE_7610000 (tree number 762)
+Highest Log Clade Credibility: -606.044853743774
+Collecting node information...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Annotating target tree...
+Writing annotated tree....
+JRI not available. Using Java bivariate attributes
+
+              TreeAnnotator v1.8.1, 2002-2014
+                    MCMC Output analysis
+                             by
+           Andrew Rambaut and Alexei J. Drummond
+
+             Institute of Evolutionary Biology
+                  University of Edinburgh
+                     a.rambaut@ed.ac.uk
+
+               Department of Computer Science
+                   University of Auckland
+                  alexei@cs.auckland.ac.nz
+
+
+Reading trees (bar assumes 10,000 trees)...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+******************
+
+Total trees read: 3001
+Ignoring first 3000000 states (300 trees).
+Total unique clades: 14521
+
+Finding maximum credibility tree...
+Analyzing 2701 trees...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Best tree: STATE_8060000 (tree number 807)
+Highest Log Clade Credibility: -269.78198830713745
+Collecting node information...
+0              25             50             75            100
+|--------------|--------------|--------------|--------------|
+************************************************************
+
+Annotating target tree...
+Writing annotated tree....
+PA
+human trunk,0.466581717088
+swine trunk,1.21100183953
+human tree,0.894259090572
+swine tree,1.11878001707
+M1
+human trunk,0.687452904872
+swine trunk,0.314767191632
+human tree,0.783536479445
+swine tree,0.782679041212
+NP
+human trunk,1.01810048216
+swine trunk,0.345977555695
+human tree,0.725384583858
+swine tree,0.686012958523
+['PA', ' average_mutation_epitope_to_nonepitope', 'number_epitopemutations', 'number_epitopesites', ' numerator', 'number_nonepitopemutations', 'number_nonepitopesites', 'denominator', '']
+humant PA 0.466581717088
+swine PA 1.21100183953
+human PA 0.894259090572
+swine PA 1.11878001707
+['M1', ' average_mutation_epitope_to_nonepitope', 'number_epitopemutations', 'number_epitopesites', ' numerator', 'number_nonepitopemutations', 'number_nonepitopesites', 'denominator', '']
+humant M1 0.687452904872
+swine M1 0.314767191632
+human M1 0.783536479445
+swine M1 0.782679041212
+['NP', ' average_mutation_epitope_to_nonepitope', 'number_epitopemutations', 'number_epitopesites', ' numerator', 'number_nonepitopemutations', 'number_nonepitopesites', 'denominator', '']
+humant NP 1.01810048216
+swine NP 0.345977555695
+human NP 0.725384583858
+swine NP 0.686012958523
+/app/python2/2.7.8/lib/python2.7/site-packages/matplotlib/tight_layout.py:225: UserWarning: tight_layout : falling back to Agg renderer
+  warnings.warn("tight_layout : falling back to Agg renderer")
+trunk
+cd8
+computing f statistic
+0.266739828476 0.296583735057
+0.264187294232 0.283748488873
+0.427045482258 0.356252705103
+0.0964679104175 0.174201155172
+0.203544283217 0.11463665806
+0.277852294435 0.201393967434
+0.175523310165 0.42135426772
+0.191822135512 0.165156784025
+0.253310571882 0.221855737803
+0.375100597488 0.514559049595
+ PA 0.077356 0.501291 -0.423935 0.987400
+computing f statistic
+0.701123340519 0.213770938839
+1.70810166799 0.0233735878458
+0.72954725973 2.11745227892
+0.367553613979 1.88430074016
+1.93447180302 5.41303077522
+0.517644388971 0.00701207635373
+1.08722909338 3.13663809895
+1.46794508113 1.25009738995
+1.17936570975 1.06729645501
+1.49361738341 0.230911569926
+ M1 0.675962 0.424036 0.251926 0.472200
+computing f statistic
+1.3453487727 0.920030177292
+1.09909567175 0.686925108087
+1.20594272852 0.976293416128
+1.72545196598 0.845196297478
+0.896243986335 1.54337985666
+1.16762964548 0.60469198851
+1.18464623408 0.792153904187
+1.37270846708 1.44240199634
+0.875454739996 1.26518294983
+1.14644411156 1.34818501001
+ NP 1.422783 0.387430 1.035353 0.005100
+Traceback (most recent call last):
+  File "/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/scripts/fanalysis.py", line 356, in <module>
+    main()
+  File "/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/scripts/fanalysis.py", line 345, in main
+    vplot = makeviolinplot(masterdistribution, vplotfile,proteins,masterdeltaf,proteins,ylab)
+  File "/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/scripts/fanalysis.py", line 239, in makeviolinplot
+    ax.gca.set_ylabel(r'$\boldsymbol{\delta}average epitope change per mutation$')
+AttributeError: 'AxesSubplot' object has no attribute 'gca'
+hmachkov@rhino01:/fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons$ 

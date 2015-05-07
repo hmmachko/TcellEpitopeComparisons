@@ -1,0 +1,89 @@
+
+
+IMPORTANT WARNING: Sequences 1943___cdsABO38379_A/Iowa/1943_NS2_H1N1 and 1948___cdsADT79103_A/Hemsbury/1948_NS2_H1N1 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 1983___cdsABC39811_A/Nanjing/36/1983_NS2_H3N2 and 1983_01_24_cdsAGI01823_A/Taiwan/1024/1983_NS2_H3N2 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 1987_07_14_cdsAGI01831_A/Taiwan/1091/1987_NS2_H3N2 and 1987___cdsAFG99254_A/Shanghai/11/1987_NS2_H3N2 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 1954___cdsCAB38574_A/Leningrad/1954/1_NS2_H1N1 and 1935___cdsABN59418_A/Alaska/1935_NS2_H1N1 are exactly identical
+
+
+IMPORTANT WARNING: Sequences 1980___cdsABD16768_A/Memphis/1/1980_NS2_H3N2 and 1981_07_06_cdsAGI01819_A/Taiwan/936/1981_NS2_H3N2 are exactly identical
+
+IMPORTANT WARNING
+Found 5 sequences that are exactly identical to other sequences in the alignment.
+Normally they should be excluded from the analysis.
+
+An alignment file with sequence duplicates removed has already
+been printed to file /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/cds_aligned.fasta.reduced
+
+
+This is RAxML version 8.1.3 released by Alexandros Stamatakis on August 13 2014.
+
+With greatly appreciated code contributions by:
+Andre Aberer      (HITS)
+Simon Berger      (HITS)
+Alexey Kozlov     (HITS)
+Kassian Kobert    (HITS)
+David Dao         (KIT and HITS)
+Nick Pattengale   (Sandia)
+Wayne Pfeiffer    (SDSC)
+Akifumi S. Tanabe (NRIFS)
+
+Alignment has 172 distinct alignment patterns
+
+Proportion of gaps and completely undetermined characters in this alignment: 0.25%
+
+RAxML rapid hill-climbing mode
+
+Using 1 distinct models/data partitions with joint branch length optimization
+
+
+Executing 1 inferences on the original alignment using 1 distinct randomized MP trees
+
+All free model parameters will be estimated by RAxML
+ML estimate of 25 per site rate categories
+
+Likelihood of final tree will be evaluated and optimized under GAMMA
+
+GAMMA Model parameters will be estimated up to an accuracy of 0.1000000000 Log Likelihood units
+
+Partition: 0
+Alignment Patterns: 172
+Name: No Name Provided
+DataType: DNA
+Substitution Matrix: GTR
+
+
+
+
+RAxML was called as follows:
+
+raxmlHPC-SSE3 -w /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/RAxML_output/ -n prelimTree -p 1 -m GTRCAT -s /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/cds_aligned.fasta --no-bfgs 
+
+
+Partition: 0 with name: No Name Provided
+Base frequencies: 0.360 0.166 0.233 0.240 
+
+Inference[0]: Time 9.233910 CAT-based likelihood -2398.886690, best rearrangement setting 10
+alpha[0]: 1.000000 rates[0] ac ag at cg ct gt: 0.710541 2.890359 0.246547 0.134808 4.025569 1.000000 
+
+
+Conducting final model optimizations on all 1 trees under GAMMA-based models ....
+
+Inference[0] final GAMMA-based Likelihood: -2677.075964 tree written to file /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/RAxML_output/RAxML_result.prelimTree
+
+
+Starting final GAMMA-based thorough Optimization on tree 0 likelihood -2677.075964 .... 
+
+Final GAMMA-based Score of best tree -2676.006846
+
+Program execution info written to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/RAxML_output/RAxML_info.prelimTree
+Best-scoring ML tree written to: /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/NS2/RAxML_output/RAxML_bestTree.prelimTree
+
+Overall execution time: 18.381758 secs or 0.005106 hours or 0.000213 days
+

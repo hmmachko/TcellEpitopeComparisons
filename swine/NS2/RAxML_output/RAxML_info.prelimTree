@@ -1,0 +1,67 @@
+
+
+This is RAxML version 8.1.3 released by Alexandros Stamatakis on August 13 2014.
+
+With greatly appreciated code contributions by:
+Andre Aberer      (HITS)
+Simon Berger      (HITS)
+Alexey Kozlov     (HITS)
+Kassian Kobert    (HITS)
+David Dao         (KIT and HITS)
+Nick Pattengale   (Sandia)
+Wayne Pfeiffer    (SDSC)
+Akifumi S. Tanabe (NRIFS)
+
+Alignment has 162 distinct alignment patterns
+
+Proportion of gaps and completely undetermined characters in this alignment: 0.30%
+
+RAxML rapid hill-climbing mode
+
+Using 1 distinct models/data partitions with joint branch length optimization
+
+
+Executing 1 inferences on the original alignment using 1 distinct randomized MP trees
+
+All free model parameters will be estimated by RAxML
+ML estimate of 25 per site rate categories
+
+Likelihood of final tree will be evaluated and optimized under GAMMA
+
+GAMMA Model parameters will be estimated up to an accuracy of 0.1000000000 Log Likelihood units
+
+Partition: 0
+Alignment Patterns: 162
+Name: No Name Provided
+DataType: DNA
+Substitution Matrix: GTR
+
+
+
+
+RAxML was called as follows:
+
+raxmlHPC-SSE3 -w /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/NS2/RAxML_output/ -n prelimTree -p 1 -m GTRCAT -s /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/NS2/cds_aligned.fasta --no-bfgs 
+
+
+Partition: 0 with name: No Name Provided
+Base frequencies: 0.345 0.164 0.252 0.239 
+
+Inference[0]: Time 19.313399 CAT-based likelihood -2533.805080, best rearrangement setting 25
+alpha[0]: 1.000000 rates[0] ac ag at cg ct gt: 0.830728 4.424861 0.340600 0.000000 4.353664 1.000000 
+
+
+Conducting final model optimizations on all 1 trees under GAMMA-based models ....
+
+Inference[0] final GAMMA-based Likelihood: -2826.394544 tree written to file /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/NS2/RAxML_output/RAxML_result.prelimTree
+
+
+Starting final GAMMA-based thorough Optimization on tree 0 likelihood -2826.394544 .... 
+
+Final GAMMA-based Score of best tree -2826.099854
+
+Program execution info written to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/NS2/RAxML_output/RAxML_info.prelimTree
+Best-scoring ML tree written to: /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/swine/NS2/RAxML_output/RAxML_bestTree.prelimTree
+
+Overall execution time: 27.192445 secs or 0.007553 hours or 0.000315 days
+

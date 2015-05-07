@@ -1,0 +1,61 @@
+A/Taiwan/783/1980
+A/Caen/1/1984
+A/Albany/8/1979
+A/Taiwan/509/1980
+A/Taiwan/777/1980
+A/Shanghai/56/1998
+A/Fujian/273/1997
+A/Jingke/266/1985
+A/Victoria/JY2/1968
+A/Hong Kong/JY2/1968
+A/North Carolina/1/1968
+A/Indiana/10/2011
+A/Wisconsin/4755/1994
+A/Wisconsin/4754/1994
+A/Aragon/RR3218/2008
+A/Victoria/1/1989
+A/swine/North Carolina/226124/2010
+A/swine/North Carolina/SG1175/2003
+A/swine/North Carolina/SG1462/2004
+A/Swine/North Carolina/35922/98
+A/swine/Colorado/02875/2009
+A/swine/North Carolina/00925/2005
+A/swine/Saskatchewan/02903/2009
+A/swine/Ohio/13TOSU2052/2013
+A/swine/Ohio/13TOSU2043/2013
+A/swine/North Carolina/226126/2010
+A/swine/Saskatchewan/02903/2009
+A/swine/Minnesota/5763/2003
+A/swine/South Dakota/SJ1319788/2013
+A/swine/Minnesota/SG1404/2011
+A/swine/North Carolina/226125/2010
+A/swine/North Carolina/01514/2007
+A/swine/Iowa/A01279512/2012
+A/swine/North Carolina/38448-1/2005
+A/swine/North Carolina/38448-4/2005
+A/swine/Ontario/11112/2004
+A/swine/North Carolina/20943/2005
+A/swine/North Carolina/01550/2007
+A/swine/Minnesota/01358/2006
+A/swine/North Carolina/SG1202/2004
+A/swine/Kentucky/SG1277/2007
+A/swine/North Carolina/SG1229/2005
+A/swine/Ohio/02026/2008
+A/swine/North Carolina/SG1279/2007
+A/swine/Missouri/46519-5/2009
+A/swine/North Carolina/SG1307/2008
+A/swine/Kansas/77778/2007
+A/swine/North Carolina/SG1281/2007
+A/swine/North Carolina/SG1278/2007
+A/swine/Pennsylvania/A01432652/2013
+A/swine/Virginia/01359/2006
+A/swine/North Carolina/SG1313/2008
+cds:AAA43683_A/swine/Iowa/15/1930
+cds:AAA43682_A/swine/Iowa/15/1930
+A/Port Chalmers/1/1973
+A/swine/UdonThani/NIAH464/2004
+A/swine/Chachoengsao/2002
+A/swine/Chachoengsao/NIAH-Nongwa/2003
+A/wildboar/Germany/WS169/2006
+A/swine/Italy/1461/96
+A/swine/Italy/1453/1996

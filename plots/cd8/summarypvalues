@@ -1,0 +1,5 @@
+summary P values
+,M1 trunk, M1 tree, NP trunk, NP tree
+fhuman/fswine,1.000000,1.000000,1.000000,1.000000
+ftrunk/ftree,1.000000,1.000000,1.000000,1.000000
+fhuman/fswine,1.000000,1.000000
