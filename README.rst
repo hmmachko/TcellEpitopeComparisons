@@ -6,7 +6,7 @@ Analysis of CD8 T-cell epitopes in influenza
 
 Summary
 ----------
-This is Heather's analysis of influenza A segments HA, NA, NP, PA, PB1, PB2, NS1, NS2, M1, and M2 from humans. Sequences of the appropriate lineage are selected, aligned to a reference sequence, and checked for accordance with the molecular clock.  
+This is an analysis of T-cell epitopes in influenza A. Performed by Heather Machkovech in the `Bloom lab`_.
 
 Software used
 ---------------
@@ -19,6 +19,8 @@ Software used
 * `RAxML`_ version 8.1.2
 
 * `Path-O-Gen`_ version 1.4
+
+* `epitopefinder`_ version 0.11
 
 Main script
 --------------
@@ -52,11 +54,11 @@ Subscripts
 
 * ``fanalysis.py`` :  `Python`_ script that calculates the average epitope change per mutation
 
-*``fplots.py`` : `Python`_ script that generates plots from the output of ``fanalysis.py``
+* ``fplots.py`` : `Python`_ script that generates plots from the output of ``fanalysis.py``
 
-*``simplifytree.py`` : `Python`_ script that simplifies BEAST maxcladecredibility tree to input to datamonkey
+* ``simplifytree.py`` : `Python`_ script that simplifies BEAST maxcladecredibility tree to input to datamonkey
 
-*``dndsanalysis.py`` :  `Python`_ script for analysis and plotting of dnds data
+* ``dndsanalysis.py`` :  `Python`_ script for analysis and plotting of dnds data
 
 
 
@@ -357,3 +359,5 @@ Output files
 .. _`RAxML`: http://sco.h-its.org/exelixis/web/software/raxml/
 .. _`EMBOSS needle`: http://www.ebi.ac.uk/Tools/psa/emboss_needle/
 .. _`dos Reis et al 2009`: http://www.ncbi.nlm.nih.gov/pubmed/19787384
+.. _`Bloom lab`: http://research.fhcrc.org/bloom/en.html
+.. _`epitopefinder`: https://github.com/jbloom/epitopefinder
