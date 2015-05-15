@@ -56,3 +56,5 @@ human/NP/\*MEME\*
 human/NP/\*FEL\*
 swine/NP/branch\*
 swine/M1/branch\*
+plots/cd8/treeepitope_to_nonepitope_mutation.pdf
+plots/cd8/trunkepitope_to_nonepitope_mutation.pdf
