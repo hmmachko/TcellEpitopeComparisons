@@ -61,7 +61,7 @@ Analysis can be run in the terminal by typing: python mainepitopecomparison.py
 
 4. We build separate protein phylogenies for the human and swine M1 and NP using BEAST. This is accomplished by ``CreateSeparateXML.py`` (which creates the BEAST input file), ``sbatchseparatephylogenies.py`` (which runs BEAST), and ``MakeMaxCladeCred.py`` (which makes a maximum clade credibility tree).
 
-5. We also build combined protein phylogenies for human and swine M1 and NP to determine the time to common ancestor. This is accomplished by ``raxmlhumanswinecombtree.py`` (makes quick tree to check for anamalous sequences), ``CreateXML.py`` (makes input file for BEAST) and ``sbatchphylogenies.py`` (.
+5. We also build combined protein phylogenies for human and swine M1 and NP to determine the time to common ancestor. This is accomplished by ``raxmlhumanswinecombtree.py`` (makes quick tree to check for anamalous sequences), ``CreateXML.py`` (makes input file for BEAST) and ``sbatchphylogenies.py`` (runs BEAST).
 
 6. We next calculate the average number of substitutions that occur at each amino acid site in M1 and NP. This will be used for later analysis. This is accomplished by ``calcaveragemutationpersite.py``. 
 
