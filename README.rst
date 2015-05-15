@@ -6,7 +6,8 @@ Analysis of CD8 T-cell epitopes in influenza
 
 Summary
 ----------
-This is Heather's analysis looking at positive selection in influenza CD8 T-cell epitopes in M1 and NP.  
+
+This is an analysis of T-cell epitopes in influenza A M1 and NP. Performed by Heather Machkovech in the `Bloom lab`_.
 
 Software used
 ---------------
@@ -19,6 +20,8 @@ Software used
 * `RAxML`_ version 8.1.2
 
 * `Path-O-Gen`_ version 1.4
+
+* `epitopefinder`_ version 0.11
 
 Main script
 --------------
@@ -48,7 +51,7 @@ Subscripts
 Steps in analysis
 -------------------
 
-Analysis can be run by typing: python mainepitopecomparison.py
+Analysis can be run in the terminal by typing: python mainepitopecomparison.py
 
 1. For each protein segment and host, a group of sequences is selected and aligned that will be used to build phylogenies by ``select_sequences.py`` (which in turn runs ``parse_sequences.py``)
 
@@ -82,3 +85,5 @@ Analysis can be run by typing: python mainepitopecomparison.py
 .. _`RAxML`: http://sco.h-its.org/exelixis/web/software/raxml/
 .. _`EMBOSS needle`: http://www.ebi.ac.uk/Tools/psa/emboss_needle/
 .. _`dos Reis et al 2009`: http://www.ncbi.nlm.nih.gov/pubmed/19787384
+.. _`Bloom lab`: http://research.fhcrc.org/bloom/en.html
+.. _`epitopefinder`: https://github.com/jbloom/epitopefinder
