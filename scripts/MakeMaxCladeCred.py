@@ -1,5 +1,6 @@
-'''This script creates a maximum clade credibility tree from a BEAST trees
- file using the BEAST treeannotator. It assumes a 10% burnin 
+'''This script creates a maximum clade credibility tree from a BEAST .trees output
+ file using BEAST treeannotator. It assumes a 10% burn-in 
+
 Input files 
 ------------
 *``prot_aligned.trees`` : BEAST file containing thinned trees 
@@ -14,13 +15,12 @@ import sys
 def main():
     
     proteinlineage_directories = (
-    #'%s/human/M1/prot_aligned.trees' % os.getcwd(),  
-   # '%s/human/NP/prot_aligned.trees' % os.getcwd(), 
-    #'%s/swine/M1/prot_aligned.trees' % os.getcwd(),  
-    #'%s/swine/NP/prot_aligned.trees' % os.getcwd(),  
-    '%s/human/HA_H3/prot_aligned.trees' % os.getcwd(),  
-    '%s/swine/HA_H3/prot_aligned.trees' % os.getcwd(), 
-    
+    '%s/human/M1/prot_aligned.trees' % os.getcwd(),  
+    '%s/human/NP/prot_aligned.trees' % os.getcwd(), 
+    '%s/swine/M1/prot_aligned.trees' % os.getcwd(),  
+    '%s/swine/NP/prot_aligned.trees' % os.getcwd(),
+    '%s/human/NP/comb_prot_aligned.trees' % os.getcwd(),
+    '%s/human/M1/comb_prot_aligned.trees' % os.getcwd(),     
     )
 
     for proteinlineage in proteinlineage_directories:
@@ -29,7 +29,10 @@ def main():
         home = os.path.expanduser("~")
         treepath = '%s/BEASTv1.8.1/bin/treeannotator' % home
         if makemaxtree:
-            makemaxcladecredtree = os.system('%s -burnin 3000000 %s %smaxcladecredibility.tre' % (treepath, proteinlineage, base))
+            if 'comb' in proteinlineage:
+                makemaxcladecredtree = os.system('%s -burnin 3000000 %s %scomb_maxcladecredibility.tre' % (treepath, proteinlineage, base))
+            else:
+                makemaxcladecredtree = os.system('%s -burnin 3000000 %s %smaxcladecredibility.tre' % (treepath, proteinlineage, base))
 
 main()
 

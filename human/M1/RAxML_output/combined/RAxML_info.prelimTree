@@ -47,7 +47,7 @@ raxmlHPC-SSE3 -w /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/M1/R
 Partition: 0 with name: No Name Provided
 Base frequencies: 0.296 0.226 0.261 0.217 
 
-Inference[0]: Time 37.296160 CAT-based likelihood -8554.976229, best rearrangement setting 10
+Inference[0]: Time 37.324889 CAT-based likelihood -8554.976229, best rearrangement setting 10
 alpha[0]: 1.000000 rates[0] ac ag at cg ct gt: 1.114824 5.835173 0.695055 0.088175 6.660107 1.000000 
 
 
@@ -63,5 +63,5 @@ Final GAMMA-based Score of best tree -9294.481848
 Program execution info written to /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/M1/RAxML_output/combined/RAxML_info.prelimTree
 Best-scoring ML tree written to: /fh/fast/bloom_j/grp/Heather/TcellEpitopeComparisons/human/M1/RAxML_output/combined/RAxML_bestTree.prelimTree
 
-Overall execution time: 82.791442 secs or 0.022998 hours or 0.000958 days
+Overall execution time: 83.013165 secs or 0.023059 hours or 0.000961 days
 

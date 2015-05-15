@@ -1,0 +1,152 @@
+	<patterns id="patterns" from="1" unique="false">
+		<alignment idref="alignment"/>
+	</patterns>
+
+	<constantSize id="constant" units="years">
+		<populationSize>
+			<parameter id="constant.popSize" value="420.0" lower="0.0" upper="Infinity"/>
+		</populationSize>
+	</constantSize>
+
+	<coalescentTree id="startingTree">
+		<taxa idref="taxa"/>
+		<constantSize idref="constant"/>
+	</coalescentTree>
+
+	<treeModel id="treeModel">
+		<coalescentTree idref="startingTree"/>
+		<rootHeight>
+			<parameter id="treeModel.rootHeight"/>
+		</rootHeight>
+		<nodeHeights internalNodes="true">
+			<parameter id="treeModel.internalNodeHeights"/>
+		</nodeHeights>
+		<nodeHeights internalNode="true" rootNode="true">
+			<parameter id="treeModel.allInternalNodeHeights"/>
+		</nodeHeights>
+	</treeModel>
+
+<coalescentLikelihood id="coalescent">
+		<model>
+			<constantSize idref="constant"/>
+		</model>
+		<populationTree>
+			<treeModel idref="treeModel"/>
+		</populationTree>
+	</coalescentLikelihood>
+
+	<strictClockBranchRates id="branchRates">
+		<rate>
+			<parameter id="clock.rate" value="7.0e-5" lower="0.0" upper="Infinity"/>
+		</rate>
+	</strictClockBranchRates>
+
+	<aminoAcidModel id="aa" type="JTT"/>
+
+	<siteModel id="siteModel">
+		<substitutionModel>
+			<aminoAcidModel idref="aa"/>
+		</substitutionModel>
+	</siteModel>
+
+	<markovJumpsTreeLikelihood id="treeLikelihood" useUniformization="true" saveCompleteHistory="true" logCompleteHistory="true" compactHistory="true">
+		<patterns idref="patterns"/>
+		<treeModel idref="treeModel"/>
+		<siteModel idref="siteModel"/>
+		<aminoAcidModel idref="aa"/>
+		<strictClockBranchRates idref="branchRates"/>
+	</markovJumpsTreeLikelihood>
+
+	<operators id="operators" optimizationSchedule="log">
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="clock.rate"/>
+		</scaleOperator>
+		<subtreeSlide size="43.0" gaussian="true" weight="15">
+			<treeModel idref="treeModel"/>
+		</subtreeSlide>
+		<narrowExchange weight="15">
+			<treeModel idref="treeModel"/>
+		</narrowExchange>
+		<wideExchange weight="3">
+			<treeModel idref="treeModel"/>
+		</wideExchange>
+		<wilsonBalding weight="3">
+			<treeModel idref="treeModel"/>
+		</wilsonBalding>
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="treeModel.rootHeight"/>
+		</scaleOperator>
+		<uniformOperator weight="30">
+			<parameter idref="treeModel.internalNodeHeights"/>
+		</uniformOperator>
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="constant.popSize"/>
+		</scaleOperator>
+		<upDownOperator scaleFactor="0.75" weight="3">
+			<up>
+				<parameter idref="clock.rate"/>
+			</up>
+			<down>
+				<parameter idref="treeModel.allInternalNodeHeights"/>
+			</down>
+		</upDownOperator>
+	</operators>
+
+	<mcmc id="mcmc" chainLength="30000000" autoOptimize="true" autoOptimizeDelay="10000">		<posterior id="posterior">
+			<prior id="prior">
+				<oneOnXPrior>
+					<parameter idref="constant.popSize"/>
+				</oneOnXPrior>
+				<gammaPrior shape="1.0" scale="1.0" offset="0.0">
+					<parameter idref="clock.rate"/>
+				</gammaPrior>
+				<coalescentLikelihood idref="coalescent"/>
+			</prior>
+			<likelihood id="likelihood">
+				<markovJumpsTreeLikelihood idref="treeLikelihood"/>
+			</likelihood>
+		</posterior>
+
+		<operators idref="operators"/>
+
+		<log id="screenLog" logEvery="1000">
+			<column label="Posterior" dp="4" width="12">
+				<likelihood idref="posterior"/>
+			</column>
+			<column label="Prior" dp="4" width="12">
+				<likelihood idref="prior"/>
+			</column>
+			<column label="Likelihood" dp="4" width="12">
+				<likelihood idref="likelihood"/>
+			</column>
+			<column label="rootHeight" sf="6" width="12">
+				<parameter idref="treeModel.rootHeight"/>
+			</column>
+			<column label="clock.rate" sf="6" width="12">
+				<parameter idref="clock.rate"/>
+			</column>
+		</log>
+
+		<log id="fileLog" logEvery="10000" fileName="comb_prot_aligned.log" overwrite="false">
+			<posterior idref="posterior"/>
+			<prior idref="prior"/>
+			<likelihood idref="likelihood"/>
+			<parameter idref="treeModel.rootHeight"/>
+			<parameter idref="constant.popSize"/>
+			<parameter idref="clock.rate"/>
+			<coalescentLikelihood idref="coalescent"/>
+		</log>
+
+		<logTree id="treeFileLog" logEvery="10000" nexusFormat="true" fileName="comb_prot_aligned.trees" sortTranslationTable="true">
+			<treeModel idref="treeModel"/>
+			<posterior idref="posterior"/>
+			<markovJumpsTreeLikelihood idref="treeLikelihood"/>
+		</logTree>
+	</mcmc>
+
+	<report>
+		<property name="timer">
+			<object idref="mcmc"/>
+		</property>
+	</report>
+</beast>

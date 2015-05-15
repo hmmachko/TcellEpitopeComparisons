@@ -23,7 +23,12 @@ def main():
     if plotepitopesperprotein:
         epitopesperprotein = subprocess.call(['python', epperprotein])
 
-    makecombinedXMLfile=False
+    combinedRAxML = False
+    combRAxML = '%s/scripts/raxmlhumanswinecombtree.py' % os.getcwd()
+    if combinedRAxML:
+        RAxML = subprocess.call(['python', combRAxML])
+
+    makecombinedXMLfile=True
     xmlinputfile1 = '%s/scripts/CreateXML.py' % os.getcwd()
     if makecombinedXMLfile:
         xmlfile = subprocess.call(['python', xmlinputfile1])
@@ -63,84 +68,28 @@ def main():
     if plotantigentononantigen:
         plotantigenvsnonantigen =  subprocess.call(['python',plotantigenictononantigenic])
 
+    makenexus=False
+    nexus = '%s/scripts/simplifytree.py' % os.getcwd()
+    if makenexus:
+        nexusfile = subprocess.call(['python',nexus])
+
+    analyzednds = False
+    dnds = '%s/scripts/dndsanalysis.py' % os.getcwd()
+    if analyzednds:
+        boxplot = subprocess.call(['python',dnds])
     calcf = False
     fcalculation = '%s/scripts/fanalysis.py' % os.getcwd()
     if calcf:
         f = subprocess.call(['python',fcalculation])
 
-    plotf = True
+    plotf = False
     fplot = '%s/scripts/fplots.py' % os.getcwd()
     if plotf:
         f = subprocess.call(['python2',fplot])
 
-##
-
-
-    calcavebranchmutation = False
-    avebranchmut = '%s/scripts/calcbranchavemutation.py' % os.getcwd()
-    if calcavebranchmutation:
-        f = subprocess.call(['python',avebranchmut])
-
-    calcfbranch = False
-    fcalculationbranch = '%s/scripts/fanalysisbranch.py' % os.getcwd()
-    if calcfbranch:
-        f = subprocess.call(['python',fcalculationbranch])
-
-    plotfbranch = False
-    fplotbranch = '%s/scripts/fplotsbranch.py' % os.getcwd()
-    if plotfbranch:
-        f = subprocess.call(['python2',fplotbranch])
-
-
-    dndsFEL = False
-    FELboxplot = '%s/scripts/boxplotdnds.py' % os.getcwd()
-    if dndsFEL:
-        boxplot = subprocess.call(['python',FELboxplot])
-
-    dndsFEL2 = False
-    FELboxplot2 = '%s/scripts/FEL2.py' % os.getcwd()
-    if dndsFEL2:
-        print 'usertree'
-        boxplot = subprocess.call(['python',FELboxplot2])
-
-    analyzeFUBAR = False
-    FUBARplots = '%s/scripts/FUBARanalysis.py' % os.getcwd()
-    if analyzeFUBAR:
-        boxplot = subprocess.call(['python2',FUBARplots])
-
-    analyzeFUBAR2 = False
-    FUBARplots2 = '%s/scripts/FUBARanalysis2.py' % os.getcwd()
-    if analyzeFUBAR2:
-        boxplot = subprocess.call(['python',FUBARplots2])
-    makenexus = False
-    nexus = '%s/scripts/simplifytree.py' % os.getcwd()
-    if makenexus:
-        nexusfile = subprocess.call(['python',nexus])
-
-    selectHA = False
-    
-    selectHAseqs = '%s/scripts/parse_sequences_HA.py' % os.getcwd()
-    if selectHA:
-        parsedsequences = subprocess.call(['python', selectHAseqs])
-
-    formatantibodyepitopes = False
-    formatepitopes = '%s/scripts/remakeepitopesfile.py' % os.getcwd()
-    if formatantibodyepitopes:
-        epitopesfile = subprocess.call(['python', formatepitopes])
 
 
 
-
-
-
-
-
-
-    # general steps:
-        # make separate trees from combined trees
-        # calc average mutations per site for whole tree and trunk
-        # plot normalized epitope to non epitope mutation rate
-        # calc 'f'
 
 
 main()

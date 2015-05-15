@@ -1,8 +1,30 @@
 '''
-This script calculates the 
+This script calculates the average number of substititutions at each site in a protein from a BEAST trees file. 
+This is done for the entire tree as well as the trunk of the tree.This analysis was done for M1 and NP for 
+human and swine influenza. It assumes a 10% burn-in.
+
+Functions
+-----------
+*``findlengthandterminalnode`` : creates sbatch file
+*``gettaxanamedict`` : creates dictionary for replacement taxa names
+*``formattree`` : formats tree to newick format so that Bio.Phylo works 
+*``readtree`` : uses Bio.Phylo to read newick tree
+*``tracetrunk`` : uses Bio.Phylo to trace trunk of last time-stamped taxa to root of tree
+*``tracetrunkfromlist`` : performs tracetrunk on a list
+*``getmutationsites`` : finds average number of mutations that occur along the tree or trunk
+*``writeoutfile`` : writes results 
+
+Input files
+-------------
+*``prot_aligned.trees`` : BEAST trees
+
+Output files
+-------------
+*``treeavemutationpersite.csv`` : average mutations at each site for entire tree
+*``trunkavemutationpersite.csv`` : average mutations at each site for trunk
+
 '''
-#this script tries to read along the trunk of a nexus tree from the most recent taxa to the root
-#and extract the mutations that occur along the trunk. 
+
 
 import os
 import Bio.Phylo
@@ -11,6 +33,9 @@ import sys
 import re
 
 def findlengthandterminalnode(tree):
+    '''
+    This function returns the number of sequences used to build a beast file *tree* and the length of the protein
+    '''
     terminalnode = ''
     lengthseq = 0
     f = open(tree, 'r')
@@ -34,9 +59,12 @@ def findlengthandterminalnode(tree):
 
 
 def gettaxanamedict(treefile,terminalnode):
-    '''the beast file has the taxa names replaced by a number - this number taxa name format isn't recognized by biophylo as the parent.
-    Thus what this function does is enable one to replace the number with the actual taxa name for all of the beast trees. This function retrieves 
-    the number and the corresponding taxa and puts it in a dictionary with the number as a key and the taxa name as the value.'''
+    '''
+    The beast file *treefile* has the taxa names replaced by a number in the tree - this number taxa name format isn't recognized by biophylo as the parent.
+    Thus what this function does is enable one to link the number with a name that is recognized by biophylo. This function creates a dictionary 
+    that has the number name as the key and the replacement name as the value. The replacement name is hostnumberinf (host is human and swine).
+    This function uses the number of taxa, *terminalnode*, to make replacement names. 
+    This function also returns the replacement name of the terminal (last date-stamped) sequence. '''
 
     nodedictionary = {}
     nodelist = [str(i+1) for i in range(int(terminalnode))]
@@ -50,8 +78,6 @@ def gettaxanamedict(treefile,terminalnode):
     else:
         addword ='human'
         termnode = 'human%sinf' % terminalnode
-
-
     f = open(treefile, 'r')
     with f as treef:
         for line in treef:
@@ -60,20 +86,9 @@ def gettaxanamedict(treefile,terminalnode):
                 if (entry[0]) in nodelist: 
                     entry[1] = entry[1].replace("'", "")
                     entry[1] = entry[1].replace(",", "")
-                    #if ('swine' or 'Swine' or 'SW' or 'sw') in entry[1]:
                     count+=1
-                    #swine +=1
-                    nodedictionary[entry[0]] = '%s%sinf' % (addword,count)
-                   # else:
-                       # human +=1
-                       # nodedictionary[entry[0]] = 'human%sinf' % human              
+                    nodedictionary[entry[0]] = '%s%sinf' % (addword,count)                           
     f.close()
-
-   # if 'swine' in treefile:
-      #  termnode = 'swine%sinf' % terminalnode
-   # else:
-       # termnode = 'human%sinf' % terminalnode
-
     print termnode
     for nodes in sorted(nodedictionary):
         print nodes, nodedictionary[nodes]
@@ -81,19 +96,23 @@ def gettaxanamedict(treefile,terminalnode):
     return nodedictionary, termnode
 
 
-def swapbranchlengthandhistory(tree,nodedict):
+def formattree(tree,nodedict):
     '''
-    this function takes a treefile that is in the format:
+    This function simplifies and reformats the BEAST trees *tree* so that Bio.Phylo can read them properly. 
+    This editing is done assuming a 10% burn-in.
 
-    :[&history_all={31,0.1,K,R}]110.2
+    It removes some information incuding the summary mutation information at the top of the 
+    tree and the sequence state information embedded in the tree.
 
-    where the [&history...] contains the mutational path and 110.2 is the branch length
+    It does some formatting so that biophlyo can read the tree properly.  
+    It takes a treefile that is in the format:
+        :[&history_all={31,0.1,K,R}]110.2
+    where the [&history...] contains the mutational path and 110.2 is the branch length and swaps the mutation
+    history and branchlength so it looks like this:
+        :110.2[&history_all={31,0.1,K,R}]
+    It replaces the number that represents the taxa with a name from the dictionary *nodedict*, created in gettaxanamedict
 
-    the output of this function swaps the mutation history and branchlength so it looks like this:
-
-    :110.2[&history_all={31,0.1,K,R}]
-
-    this format is then used for reading the tree using biopython
+    This function returns the edited trees in the BEAST file as a list. 
 
     '''
     print "reading file and formatting"
@@ -133,44 +152,42 @@ def swapbranchlengthandhistory(tree,nodedict):
             replacement = "%s:" % (nodedict[match[2]])
             tree = re.sub('(?<=[,\(])%s:'%match[2],replacement, tree)
         last_list.append(tree)
-    #print last_list
 
     return last_list
 
 def readtree(tree):
     '''
-    This function reads a newick tree from a string 
+    This function reads a newick tree *tree* from a string using Bio.Phylo
     '''
     #print 'reading tree'
     readtree = Bio.Phylo.read(StringIO(tree), 'newick')
     return readtree
   
 def tracetrunk(tree, terminal):
-    
-    #This function reads a newick tree and given the name of a terminal node returns the path to the root, does not include root
+    '''
+    This function reads a newick tree *tree*, and given the name of a terminal node *terminal* returns the path to the root.
+    '''
     
     tracepath = Bio.Phylo.BaseTree.TreeMixin.get_path(tree, target = terminal)
-    #print tracepath
     return tracepath
 
 def tracetrunkfromlist(treelist, terminal):
-
+    '''
+    This function traces each newick tree in a list of trees *treelist* from a terminal node *terminal* to the root. 
+    The result is returned as a list. 
+    '''
     tracelist = []
     print "tracing trunk "
     for tree in treelist:
         readt = readtree(tree)
-        #print readt
-        #print terminal
-       # print "trace of trunk"
         tracet = tracetrunk(readt, terminal)
-       # print tracet
         tracelist.append(str(tracet))
-
     return tracelist
  
 def getmutationsites(paths):
     '''
-    This function returns dictionary with aa position as key and number of mutations as value
+    This function takes a list of newick trees in *paths* and finds the average number of substitutions that occur at each site.
+    This result is returned as a dictionary with aa position as key and average number of substitutions as the value
     '''
     aa_dict = {}
     print "finding aa mutations"
@@ -188,6 +205,13 @@ def getmutationsites(paths):
     return aa_dict
 
 def writeoutfile(aadict, outfile, lengthprot):
+    '''
+    This function writes the results of the average number of substitutions per site to a csv file *outfile*. 
+    *aadict* is a dictionary with amino acid as the key and average number of substitutions as the key. The oufile has 
+    a titleline: site, avemutation. Each subsequent line has an amino acid number and the corresponding number of mutations. 
+    *lengthprot* is used because if there were no mutations, that site is not in the dictionary, so the value is recorded as
+    0 in the outfile. 
+    '''
 
     f = open(outfile, 'w')
     f.write('site,avemutation\n')
@@ -199,111 +223,32 @@ def writeoutfile(aadict, outfile, lengthprot):
             f.write('%s,%s\n' %(aa, aadict[str(aa)]))
     f.close()
 
-def MakeSubTree(treelist, prune):
-    '''This function takes the tree from maintreefile, and prunes
-    any terminal nodes that appear in the list prune. The new subtree
-    is then saved as a newick tree file. The function uses methods from
-    the Bio.Phylo module.
-
-    treefile -> File name for tree written in Newick format. 
-    subtreefile -> File name for tree generated in this function. This tree
-       will have the nodes in prune pruned.
-    subtreealignmentfile -> File name for alignment of sequences 
-       in the subtree.
-    seqs -> A dictionary where the key is the sequence name and the value
-       is the sequence. This contains the aligned sequences used to make
-       the tree from treefile.
-    prune -> A list of the names of terminal nodes in the tree 
-       that will get pruned.
-    '''
-
-    print 'pruning'
-    pruned_trees = []
-    i =0
-    for entry in treelist:
-        i +=1
-        if i%100 == 0:
-            print i
-        tree = readtree(entry)
-        term = tree.get_terminals()
-        #print tree
-
-        for nodename in prune:
-            node=[node for node in tree.find_clades(name='.*%s.*' % nodename)]
-            #print nodename, 
-            #print node,node[0]
-            tree.prune(node[0])
-        treeformat = Bio.Phylo.BaseTree.Tree.format(tree,'newick')
-        pruned_trees.append(treeformat)
-    print len(pruned_trees)
-
-    return pruned_trees
-
-
-def PruneList(nodedict):
-    '''This function returns a list of node names to prune from the tree. The
-    list of nodes is the complement to the list of nodes whose names match
-    user-specified patterns. For example, if the pattern is 'H3N2', the list
-    of nodes to prune will be nodes from H1N1 and H2N2 viral subtypes.
-
-    treefile -> File name for tree written in Newick format. 
-    pattern -> A list of substrings that are found in the names of the terminal
-       nodes in a phylogenetic tree. For example, one element of pattern could
-       be H1N1, and this would match terminal nodes that had names like 
-       1984.62_36_A/Managua/3759.02/2008_HOST_Human_H1N1. Pattern could be set to
-       a set of years (1918-2014), or viral subtypes (H1N1, H2N2, H3N2).
-    problem_symbol -> There is a terminal node name, 957.50_132_A/Leningrad/134/47/ts+18/1957_HOST_Human_H2N2,
-       which has a + in it. This interferes with looking for node names in the tree, so the
-       PruneList function has code to deal with this specific name.
-    prune -> A list of node names to prune from the tree. This list is returned by the function.
-    '''
-
-    prune_swine = []
-    prune_human = []
-    
-    for key in nodedict:
-        print nodedict[key]
-        if 'swine' in nodedict[key]:
-            prune_swine.append(nodedict[key])
-        else:
-            prune_human.append(nodedict[key])
-
-    return prune_swine,prune_human
-
-
-
 def main():
     home = os.path.expanduser("~")
 
     treefiles = (
-                #'%s/human/NP/prot_aligned.trees' % os.getcwd(),
-                #'%s/human/M1/prot_aligned.trees' % os.getcwd(),  
-                #'%s/swine/NP/prot_aligned.trees' % os.getcwd(),
-                #'%s/swine/M1/prot_aligned.trees' % os.getcwd(), 
-                '%s/human/HA_H3/prot_aligned.trees' % os.getcwd(),
-                '%s/swine/HA_H3/prot_aligned.trees' % os.getcwd(),           
+                '%s/human/NP/prot_aligned.trees' % os.getcwd(),
+                '%s/human/M1/prot_aligned.trees' % os.getcwd(),  
+                '%s/swine/NP/prot_aligned.trees' % os.getcwd(),
+                '%s/swine/M1/prot_aligned.trees' % os.getcwd(),        
                 )
 
     treeoutfiles = (
-                #'%s/human/NP/treeavemutationpersite.csv'% os.getcwd(),
-               # '%s/human/M1/treeavemutationpersite.csv'% os.getcwd(),
-               # '%s/swine/NP/treeavemutationpersite.csv'% os.getcwd(),
-               # '%s/swine/M1/treeavemutationpersite.csv'% os.getcwd(), 
-                '%s/human/HA_H3/treeavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/HA_H3/treeavemutationpersite.csv'% os.getcwd(),          
+                '%s/human/NP/treeavemutationpersite.csv'% os.getcwd(),
+                '%s/human/M1/treeavemutationpersite.csv'% os.getcwd(),
+                '%s/swine/NP/treeavemutationpersite.csv'% os.getcwd(),
+                '%s/swine/M1/treeavemutationpersite.csv'% os.getcwd(),        
                 )
 
     trunkoutfiles = (
-               # '%s/human/NP/trunkavemutationpersite.csv'% os.getcwd(),
-               # '%s/human/M1/trunkavemutationpersite.csv'% os.getcwd(),
-               # '%s/swine/NP/trunkavemutationpersite.csv'% os.getcwd(),
-               # '%s/swine/M1/trunkavemutationpersite.csv'% os.getcwd(),
-                '%s/human/HA_H3/trunkavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/HA_H3/trunkavemutationpersite.csv'% os.getcwd(),
+                '%s/human/NP/trunkavemutationpersite.csv'% os.getcwd(),
+                '%s/human/M1/trunkavemutationpersite.csv'% os.getcwd(),
+                '%s/swine/NP/trunkavemutationpersite.csv'% os.getcwd(),
+                '%s/swine/M1/trunkavemutationpersite.csv'% os.getcwd(),
                 )
 
 
-    align_datainput = list(zip(treefiles,treeoutfiles,trunkoutfiles)) #terminalnodenumberlabel,terminalnodereplacementlabel, outfiles, len_protein))
+    align_datainput = list(zip(treefiles,treeoutfiles,trunkoutfiles)) 
     for entry in align_datainput:
         print entry[0]
         findnodeandlength = True
@@ -313,46 +258,30 @@ def main():
         if getnodedict:
             nodedict,lastnode = gettaxanamedict(entry[0],terminalnode)
         
-        swapbranchandhistory = True
-        if swapbranchandhistory:
-            swaptree = swapbranchlengthandhistory(entry[0], nodedict)     
-
-        getprunelist = False
-        if getprunelist:
-            human, swine = PruneList(nodedict)
-        getsubtree = False
-        if getsubtree:
-            subtree = MakeSubTree(swap, human)
-           # swinesubtree = MakeSubTree(swap, swine)
+        treeformat = True
+        if treeformat:
+            swaptree = formattree(entry[0], nodedict)     
 
         treemutations = True
         if treemutations:
             treemutations = getmutationsites(swaptree)
-            #swinetreemutations = getmutationsites(swinesubtree)
 
         treemutationspersitefile = True
         if treemutationspersitefile:
             writeresults = writeoutfile(treemutations,entry[1], sequencelength)
-            #writeresults = writeoutfile(swinetreemutations,entry[2], sequencelength)
 
         tracetrunks = True
         if tracetrunks:
             trunk = tracetrunkfromlist(swaptree, lastnode)
-            #swinetrunk = tracetrunkfromlist(swinesubtree, swinetermnode)
 
         trunkmutations = True
         if trunkmutations:
             trunkmutations = getmutationsites(trunk)
-          #  swinetrunkmutations = getmutationsites(swinetrunk)
 
         trunkmutationspersitefile = True
         if trunkmutationspersitefile:
             writeresults = writeoutfile(trunkmutations,entry[2], sequencelength)
-           # writeresults = writeoutfile(swinetrunkmutations,entry[4], sequencelength)
 
-        testtrace = False
-        if testtrace:
-            trace = tracetrunkfromlist(swap,humantermnode)
 
 
         

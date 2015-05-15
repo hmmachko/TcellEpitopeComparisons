@@ -1,0 +1,70 @@
+def MakeSubTree(treelist, prune):
+    '''This function takes the tree from maintreefile, and prunes
+    any terminal nodes that appear in the list prune. The new subtree
+    is then saved as a newick tree file. The function uses methods from
+    the Bio.Phylo module.
+
+    treefile -> File name for tree written in Newick format. 
+    subtreefile -> File name for tree generated in this function. This tree
+       will have the nodes in prune pruned.
+    subtreealignmentfile -> File name for alignment of sequences 
+       in the subtree.
+    seqs -> A dictionary where the key is the sequence name and the value
+       is the sequence. This contains the aligned sequences used to make
+       the tree from treefile.
+    prune -> A list of the names of terminal nodes in the tree 
+       that will get pruned.
+    '''
+
+    print 'pruning'
+    pruned_trees = []
+    i =0
+    for entry in treelist:
+        i +=1
+        if i%100 == 0:
+            print i
+        tree = readtree(entry)
+        term = tree.get_terminals()
+        #print tree
+
+        for nodename in prune:
+            node=[node for node in tree.find_clades(name='.*%s.*' % nodename)]
+            #print nodename, 
+            #print node,node[0]
+            tree.prune(node[0])
+        treeformat = Bio.Phylo.BaseTree.Tree.format(tree,'newick')
+        pruned_trees.append(treeformat)
+    print len(pruned_trees)
+
+    return pruned_trees
+
+
+def PruneList(nodedict):
+    '''This function returns a list of node names to prune from the tree. The
+    list of nodes is the complement to the list of nodes whose names match
+    user-specified patterns. For example, if the pattern is 'H3N2', the list
+    of nodes to prune will be nodes from H1N1 and H2N2 viral subtypes.
+
+    treefile -> File name for tree written in Newick format. 
+    pattern -> A list of substrings that are found in the names of the terminal
+       nodes in a phylogenetic tree. For example, one element of pattern could
+       be H1N1, and this would match terminal nodes that had names like 
+       1984.62_36_A/Managua/3759.02/2008_HOST_Human_H1N1. Pattern could be set to
+       a set of years (1918-2014), or viral subtypes (H1N1, H2N2, H3N2).
+    problem_symbol -> There is a terminal node name, 957.50_132_A/Leningrad/134/47/ts+18/1957_HOST_Human_H2N2,
+       which has a + in it. This interferes with looking for node names in the tree, so the
+       PruneList function has code to deal with this specific name.
+    prune -> A list of node names to prune from the tree. This list is returned by the function.
+    '''
+
+    prune_swine = []
+    prune_human = []
+    
+    for key in nodedict:
+        print nodedict[key]
+        if 'swine' in nodedict[key]:
+            prune_swine.append(nodedict[key])
+        else:
+            prune_human.append(nodedict[key])
+
+    return prune_swine,prune_human

@@ -1,4 +1,49 @@
+'''This script selects up to 3 sequences/subtype/year for influenza (human and swine) NP, PA, PB2, NS1, NS2, M1, and M2. The lineage 
+is H1N1 1918 to 1957,H2N2 1957 to 1968, H3N2 1968 to 2013. It translates the set of sequences and performs pairwise alignements using 
+EMBOSS Needle to a reference sequence. The first step of parsing is done by calling the script ``select_sequences.py`` for each segment. 
+It also builds a quick RAxML tree that is then visually inspected for outliers in Path-O-gen. 
 
+Functions
+-----------
+*``noambiguous`` : removes sequences with ambiguous characters
+*``norepeats`` : maintains only unique sequences
+*``noanomalies``: removes anamolous sequences
+*``clean`` : keeps 3 sequences per subtype/year (for each host)
+*``make_protein_record`` : retruns protein sequence
+*``translated`` : translates DNA to protein, and writes results to fasta file
+*``align`` : performs pairwise alignments, formats fasta title lines, and writes results to fasta file
+*``raxmltree`` : creates RAxML tree 
+
+Input files
+------------
+* ``sequences.fasta`` : file containing sequences for 1 segment. Sequences are located in segment folder and were obtained from the `Influenza Virus Resource`_ with the following search parameters:
+    - sequence type: coding region
+    - type: A
+    - host: human
+    - country: any
+    - segment: appropriate segment
+    - subtype: any
+    - full-length only
+    - exclude pandemic H1N1
+    - exclude lab strains
+    - include lineage defining strains
+    - include FLU project
+    - include vaccine strains
+    - include mixed subtype
+    - coding region
+    - FASTAdefline: ``>{year}/{month}/{day}{accession}{strain}{segname}{serotype}``
+    - Search performed on Sept-10-2014 for NP, PB1, and PB2. Sept-24-2014 for NS1, NS2, M1, and M2. (human)
+    - swine NP Oct-24-2014; NS2, PA, PB2 Oct-27-2014; NS1 Nov-1-2014; M1, M2 Dec-8-2014
+*``reference_sequence.fasta`` : reference sequence for alignments, A/Aichi/2/1968
+*``parsed.fasta``: coding sequences for each protein that have been filtered by year and length.
+
+Output files
+---------------
+*``parsed.fasta``: re-write of file with final set of coding sequences for each protein.
+*``reference_sequence_translated.fasta`` : translated reference sequence
+*``parsed_translated.fasta`` : aligned translated final set of sequences
+*``cds_aligned.fasta`` : aligned coding sequences (final set)
+'''
 import subprocess
 import os
 import re
@@ -33,7 +78,7 @@ def noambiguous(seqs):
 
 
 def norepeats(seqs):
-  """ This function gets rid of repeats in a list of sequences"""
+  """ This function gets rid of repeats in a list of sequences *seqs* that is in BioPython format."""
 
   print "Selecting non-repeated sequences"
 
@@ -51,8 +96,9 @@ def norepeats(seqs):
  
 
 def noanomalies(seqs):
-  """This function removes previously identified anomalous sequences that are 
-  found in JVI_82_8947_Anomalies.txt, JDB_Anomalies.txt, and HMM_Anomalies.txt."""
+  """This function removes previously identified anomalous sequences from *seqs* that are 
+  found in JVI_82_8947_Anomalies.txt, JDB_Anomalies.txt, and HMM_Anomalies.txt. *seqs* is a list of sequences
+  in BioPython format. Includes sequences identified in Krasnitz et al 2008."""
 
   print "Removing anomalous sequences"
   sequences = []
@@ -75,7 +121,8 @@ def noanomalies(seqs):
 
 def clean(seqs,host):
   """This function keeps 3 sequences/year per subtype. It requires that the year be contained 
-  in the first 4 characters of the title line."""
+  in the first 4 characters of the title line.*seqs* is a list of sequences
+  in BioPython format. *host* is a string with either human or swine."""
   
   subtype_refine = {}
   if host =='swine':
@@ -122,9 +169,8 @@ def translate(sequences):
   SeqIO.write(proteins, "%s_translated.fasta" % basename, "fasta")
 
 def align(reference, proteins):
-  """This function performs pairwise alignments of sequences in a fasta file and returns the sequences as both a protein and
+  """This function uses Needle to perform pairwise alignments of sequences using  `EMBOSS needle` in a fasta file and returns the sequences as both a protein and
   cDNA fasta file with the gaps stripped relative to reference. It also removes characters from the fasta defline not allowed in RAxML.
-  It also subtracts 24 yrs from H1N1 from 1977 on. 
 
   reference = reference protein for pairwise alignments
   proteins = fasta sequences to be aligned
@@ -152,26 +198,17 @@ def align(reference, proteins):
 # make list with desired defline >{year}/{month}/{day}{accession}{strain}{segname}{serotype} and remove ':)(;, (not allowed in RAxML) 
   heads = []
   seqs = []
-  print "removing forbidden characters,adjusting year for H1N1 from 1977 on, and removing spaces in defline"
+  print "removing spaces in defline"
   for i in DNAseqs:
     seqs.append(i.seq)
-    #print "description", i.description
-    #print "id", i.id
+
     i.id = ''
     forbidden = re.sub("[':)(;,]", "", i.description)
-    #print forbidden
     i.description = forbidden
     fspace = re.sub(' ', '', i.description)
     i.description = fspace
     year = int(i.description[0:4])
     subtype = str(i.description[-4 : ])
-    #if (year >= 1977 and subtype == 'H1N1'):
-      #adjustedyear = year - 24
-      #base = str(i.description[4:])
-      #adjustyear = re.sub(i.description[0:4], "%s" % newyear, i.description)
-      #i.description = str(adjustedyear) + base
-      #heads.append(i.description)
-    #else:
     heads.append(i.description)
 
   assert len(align) == 2 * len(prots) == 2 * len(seqs)
@@ -207,8 +244,7 @@ def align(reference, proteins):
     
     alignedprot = ''.join(alignedprot)
     alignedcds = ''.join(alignedcds)
-    #print alignedprot
-    #print alignedcds
+
     assert len(alignedprot) == len(refpro)
     protrecord = SeqRecord(Seq(alignedprot), id = head, description = '')
     prot_alignment.append(protrecord)
@@ -246,7 +282,7 @@ def raxmltree(sequencesets):
 
 def main():
 
-  hosts = ('swine',)#'human',
+  hosts = ('swine','human')
 
 
   for host in hosts:
@@ -256,14 +292,10 @@ def main():
     '%s/%s/M1/select_sequences.py' % (os.getcwd(), host),
     '%s/%s/M2/select_sequences.py' % (os.getcwd(), host),
     '%s/%s/NP/select_sequences.py' % (os.getcwd(), host),  
-    '%s/%s/HA_H1/select_sequences.py' % (os.getcwd(), host),     
-    '%s/%s/NA_N1/select_sequences.py' % (os.getcwd(), host), 
     '%s/%s/PA/select_sequences.py' % (os.getcwd(), host),
-    '%s/%s/PB1_P1/select_sequences.py' % (os.getcwd(), host),
     '%s/%s/PB2/select_sequences.py' % (os.getcwd(), host),
     )
-  
-  
+   
     for seqsets in starting_sequencesets:
       base = seqsets[:-19]
       print base

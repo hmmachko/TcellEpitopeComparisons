@@ -1,6 +1,6 @@
 '''
 This script summarizes the output of epitopefinder, a program we used to map experimentally determined cd8 epitope 
-sequences (from Immune Epitope Database) to influenza proteins HA, NA, NS1, NS2, M1, M2, PB1, PB2, PA, NP. 
+sequences (from Immune Epitope Database) to influenza proteins  NS1, NS2, M1, M2, PB2, PA, NP. 
 This script makes two types of graphs,a graph of how many epitopes are in each protein, and a graph for each 
 protein that displays the number of epitopes at each amino acid. 
 
@@ -15,15 +15,15 @@ Functions
 
 Input files
 -------------
-*``combinedepitopesbysite.csv`` :
-*``combinedepitopeslist.csv`` :
+*``combinedepitopesbysite.csv`` : epitopes per site file
+*``combinedepitopeslist.csv`` : list of unique epitopes for a protein
 
 Output files
 --------------
-*``epitopespersite.pdf`` :
-*``numberepitopesperprotein.pdf`` :
+*``epitopespersite.pdf`` : plot of number of epitopes for each amino acid in a protein
+*``numberepitopesperprotein.pdf`` : summary of total epitopes in each protein
 
-generates two different types of bar graphs: a summary plot of number of epitopes in each protein and a plot for each protein of the number of epitopes at each amino acid along the protein. 
+
 '''
 import os
 import re
@@ -32,31 +32,12 @@ matplotlib.use('pdf')
 import pylab
 import numpy as np
 
-def opencsvfile(fname):
-    '''This function takes a file *fname* in the following format:
-    titleline
-    1, 0
-    2, 2
-    3, 5
-    and returns two lists,*protein* containing the first column entries (amino acid site) and the second list 
-    *epitopenumber* containing the second column (number of epitopes)
-    '''
-    proteins = []
-    epitopenumber = []
-    fx = open(fname,'r')
-    with fx as f:
-        #next(f)
-        for lines in fx:     
-            entry = lines.strip().split(",")
-            epitopenumber.append(int(entry[1]))
-            proteins.append(entry[0])
-    return proteins, epitopenumber
 
 def countepitopesperprotein(fname,counts):
     '''This function counts the number of unique epitopes in a protein from the output from epitopefinder. 
     *fname* epitopefinder file where each line contains an entry for an epitope
     *counts* list of epitopes for each protein
-    *numbersites* 
+    
     '''
 
     fx = open(fname,'r')
@@ -107,7 +88,7 @@ def bargraph(data, labs, plotfile, yaxis):
     pylab.close()
 
 def listsfromfile(fname):
-    '''This function returns a list of amino acid sites, a list of number of epitopes per site, and the lenght from a file *fname*
+    '''This function returns a list of amino acid sites, a list of number of epitopes per site, and the length of a protein from a file *fname*
     *fname* file that contains a titleline as the first line and subsequent lines with sites as first entry and epitopes
     per site as second entry
     ''' 
@@ -148,7 +129,7 @@ def plotbargraph(xval,yval,protein, plotfile,xaxislim):
 
 def main():
     epitopetypes = ('cd8',)
-    proteins = ('NS1','NS2','M2','PB2','PA','M1','NP','HA_H3')
+    proteins = ('NS1','NS2','M2','PB2','PA','M1','NP')
 
     epsperprotein = []
     for epitope in epitopetypes:
@@ -163,10 +144,8 @@ def main():
 
         for protein in proteins:
             print protein
-            if protein =='HA_H3':
-                infile2 = ('%s/human/%s/antibodyepitopesbysite.csv' %(os.getcwd(),protein))
-            else:
-                infile2 = ('%s/human/%s/%scombinedepitopesbysite.csv' %(os.getcwd(),protein,epitope))
+            
+            infile2 = ('%s/human/%s/%scombinedepitopesbysite.csv' %(os.getcwd(),protein,epitope))
             getepitopespersite = True
             if getepitopespersite:
                 sitelist,epspersite,lenprotein = listsfromfile(infile2)
@@ -175,15 +154,10 @@ def main():
             epitopepersiteoutfile ='%s/plots/%s/epitopespersite/%sepitopespersite.pdf' % (os.getcwd(),epitope,protein)
             if plotepitopespersite:
                 ploteppersite = plotbargraph(sitelist,epspersite,protein, epitopepersiteoutfile,lenprotein)
-
-            infile = ('%s/human/%s/%scombinedepitopeslist.csv' %(os.getcwd(),protein,epitope))
-            if protein == 'HA_H3':
-                countepitopes = False
-            else:
-                countepitopes = True 
+            
+            countepitopes = True 
             if countepitopes:
                 epitopesperprotein = countepitopesperprotein(infile,epsperprotein)
-
         
         bar = True
         outfile = ('%s/plots/%s/numberepitopesperprotein.pdf' %(os.getcwd(),epitope))

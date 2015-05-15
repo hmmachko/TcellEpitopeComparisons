@@ -1,11 +1,21 @@
-""" This script selects lineage for a set of DNA sequences for human NP
+''' This script selects lineage for a set of DNA sequences for human NP
 
 Written by Heather Machkovech
 
 Functions defined in this module
 ------------------------------------
 
-* `selectlineage` : returns a list of sequences containing desired lineage from a FASTA file"""
+*``selectlineage`` : returns a list of sequences containing desired lineage based on year and subtype from a FASTA file
+*``selectforlength`` : returns a list of sequences filtered by length
+
+Input files
+------------
+*``sequences.fasta`` : unparsed NP DNA sequences
+
+Output files
+-------------
+*``parsed.fasta`` : parsed NP sequences
+'''
 
 import listFASTA
 import random

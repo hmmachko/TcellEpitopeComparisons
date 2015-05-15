@@ -1,5 +1,5 @@
-'''This script submits for sbatch the program epitope finder to align CD8 T-cell epitopes to influenza proteins.
-This analysis is done for NS1, NS2, H1 HA, N1 NA, PB1, P1 PB2, M1, M2, PA, and NP. Both human and swine influenza sequences are included.
+'''This script submits to sbatch the program epitope finder to align CD8 T-cell epitopes to influenza proteins.
+This analysis is done for NS1, NS2, PB1,  M1, M2, PA, and NP. Both human and swine influenza sequences are included.
 
 Functions
 -----------
@@ -59,7 +59,6 @@ def makeinfile(folder, mhcdictionary,infilename,epitopetype):
     fx.write('epitopesbysitefile %s%scombinedepitopesbysite.csv\n' % (folder,epitopetype))
     fx.close()
 
-
 def CreateSbatchFile(fname,time,command):
     '''This function creates an sbatch file 
     *``fname`` : sbatch.run filename
@@ -73,7 +72,6 @@ def CreateSbatchFile(fname,time,command):
     f.write('%s'%command)
     f.close()
     
-
 
 def main():
 
@@ -92,11 +90,8 @@ def main():
         '%s/human/NS2/prot_aligned.fasta' % os.getcwd(),
         '%s/human/M1/prot_aligned.fasta' % os.getcwd(),
         '%s/human/M2/prot_aligned.fasta' % os.getcwd(),
-        '%s/human/NP/prot_aligned.fasta' % os.getcwd(),  
-        '%s/human/HA_H1/prot_aligned.fasta' % os.getcwd(), 
-        '%s/human/NA_N1/prot_aligned.fasta' % os.getcwd(),
-        '%s/human/PA/prot_aligned.fasta' % os.getcwd(),
-        '%s/human/PB1_P1/prot_aligned.fasta' % os.getcwd(),
+        '%s/human/NP/prot_aligned.fasta' % os.getcwd(),       
+        '%s/human/PA/prot_aligned.fasta' % os.getcwd(),       
         '%s/human/PB2/prot_aligned.fasta' % os.getcwd()
         )
     swinefolders = (
@@ -104,11 +99,8 @@ def main():
         '%s/swine/NS2/prot_aligned.fasta' % os.getcwd(),
         '%s/swine/M1/prot_aligned.fasta' % os.getcwd(),
         '%s/swine/M2/prot_aligned.fasta' % os.getcwd(),
-        '%s/swine/NP/prot_aligned.fasta' % os.getcwd(),  
-        '%s/swine/HA_H1/prot_aligned.fasta' % os.getcwd(), 
-        '%s/swine/NA_N1/prot_aligned.fasta' % os.getcwd(),
-        '%s/swine/PA/prot_aligned.fasta' % os.getcwd(),
-        '%s/swine/PB1_P1/prot_aligned.fasta' % os.getcwd(),
+        '%s/swine/NP/prot_aligned.fasta' % os.getcwd(),     
+        '%s/swine/PA/prot_aligned.fasta' % os.getcwd(),   
         '%s/swine/PB2/prot_aligned.fasta' % os.getcwd()
         )
 
@@ -128,7 +120,7 @@ def main():
             command = program + ' ' + epitopefile 
             time = 024
             sbatchfname = '%srunepitopefinder.sbatch' % base
-            #epitopefinderinfile = '%s%sepitopefinderinfile.txt' % (folder,epitopetype)
+            
             make_epinfile = True
             if make_epinfile:
                 inputfile = makeinfile(base, mhcdict,epitopefile,epitopetype)
@@ -136,7 +128,7 @@ def main():
             make_sbatch = True
             if make_sbatch:
                 sbatchfile = CreateSbatchFile(sbatchfname,time,command)
-                #makesbatchfile(folder,epitopetype)
+    
             run_sbatch = True
             if run_sbatch:
                 os.system('sbatch %s' %(sbatchfname)) 

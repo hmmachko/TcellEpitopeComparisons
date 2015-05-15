@@ -1,5 +1,5 @@
 '''This script is to build a quick RAxML tree of combined human and swine lineage to remove any potential outliers.
-This analysis was done for influenza NS1, NS2, H1 HA, N1 NA, PB1, P1 PB2, M1, M2, PA, and NP. 
+This analysis was done for influenza  M1 and NP. 
 
 Functions
 ----------
@@ -50,29 +50,13 @@ def raxmltree(sequencesets):
 def main():
 
     humanseqfiles = (
-        '%s/human/NS1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/human/NS2/cds_aligned.fasta' % (os.getcwd()),
         '%s/human/M1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/human/M2/cds_aligned.fasta' % (os.getcwd()),
-        '%s/human/NP/cds_aligned.fasta' % (os.getcwd()),  
-        '%s/human/HA_H1/cds_aligned.fasta' % (os.getcwd()),     
-        '%s/human/NA_N1/cds_aligned.fasta' % (os.getcwd()), 
-        '%s/human/PA/cds_aligned.fasta' % (os.getcwd()),
-        '%s/human/PB1_P1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/human/PB2/cds_aligned.fasta' % (os.getcwd()),
+        '%s/human/NP/cds_aligned.fasta' % (os.getcwd()),       
     )
 
     swineseqfiles = (
-        '%s/swine/NS1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/swine/NS2/cds_aligned.fasta' % (os.getcwd()),
         '%s/swine/M1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/swine/M2/cds_aligned.fasta' % (os.getcwd()),
-        '%s/swine/NP/cds_aligned.fasta' % (os.getcwd()),  
-        '%s/swine/HA_H1/cds_aligned.fasta' % (os.getcwd()),     
-        '%s/swine/NA_N1/cds_aligned.fasta' % (os.getcwd()), 
-        '%s/swine/PA/cds_aligned.fasta' % (os.getcwd()),
-        '%s/swine/PB1_P1/cds_aligned.fasta' % (os.getcwd()),
-        '%s/swine/PB2/cds_aligned.fasta' % (os.getcwd()),
+        '%s/swine/NP/cds_aligned.fasta' % (os.getcwd()),     
     )
 
     combinedfiles = list(zip(humanseqfiles,swineseqfiles))

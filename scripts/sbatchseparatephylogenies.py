@@ -22,6 +22,8 @@ import os
 import sys
 
 def CreateSbatchFile(fname,time,command):
+    '''This function creates an sbatch file with filename *fname*, time for running *time* (in hours) and sbatch command *command*
+    '''
     f = open(fname,'w')
     f.write('#!/bin/sh\n')
     f.write('#SBATCH\n')
@@ -33,12 +35,10 @@ def CreateSbatchFile(fname,time,command):
 def main():
 
     folders = (
-        #'%s/human/M1/' % os.getcwd(),
-        #'%s/human/NP/' % os.getcwd(),
-        #'%s/swine/M1/' % os.getcwd(),
-       # '%s/swine/NP/' % os.getcwd(),
-        '%s/human/HA_H3/' % os.getcwd(),
-        '%s/swine/HA_H3/' % os.getcwd(),
+        '%s/human/M1/' % os.getcwd(),
+        '%s/human/NP/' % os.getcwd(),
+        '%s/swine/M1/' % os.getcwd(),
+        '%s/swine/NP/' % os.getcwd(), 
         )
 
     home = os.path.expanduser("~")

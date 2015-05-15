@@ -1,4 +1,4 @@
-'''This script submits for sbatch the command to build BEAST trees for influenza NP, PA, M1, and H1 HA. 
+'''This script submits for sbatch the command to build combine human and swine influenza BEAST trees for M1 and NP. 
 
 Functions
 -----------
@@ -11,8 +11,8 @@ Input files
 Output files
 --------------
 *``run.sbatch`` : sbatch file to run BEAST
-*``prot_aligned.trees`` : BEAST output file containing thinned trees 
-*``prot_aligned.log` : BEAST log output
+*``comb_prot_aligned.trees`` : BEAST output file containing thinned trees 
+*``comb_prot_aligned.log` : BEAST log output
 
 Written by Heather Machkovech Feb 2015
 
@@ -22,6 +22,8 @@ import os
 import sys
 
 def CreateSbatchFile(fname,time,command):
+    '''This function creates an sbatch file with filename *fname*, time for running *time* (in hours) and sbatch command *command*
+    '''
     f = open(fname,'w')
     f.write('#!/bin/sh\n')
     f.write('#SBATCH\n')
@@ -33,11 +35,8 @@ def CreateSbatchFile(fname,time,command):
 def main():
 
     folders = (
-        #'%s/human/M1/' % os.getcwd(),
-        #'%s/human/NP/' % os.getcwd(),
-        #'%s/human/PA/' % os.getcwd(),
-        #'%s/human/HA_H3/' % os.getcwd(),
-       # '%s/swine/HA_H3/' % os.getcwd(),
+        '%s/human/M1/' % os.getcwd(),
+        '%s/human/NP/' % os.getcwd(),
 
         )
 
