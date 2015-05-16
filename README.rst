@@ -65,8 +65,7 @@ Analysis can be run in the terminal by typing: python mainepitopecomparison.py
 
 6. We next calculate the average number of substitutions that occur at each amino acid site in M1 and NP. This will be used for later analysis. This is accomplished by ``calcaveragemutationpersite.py``. 
 
-7. We compare the rate of epitope substitution to nonepitope substitution for M1 and NP. A summary plot that contains all the values of this epitope to nonepitopesubstitution rate is also constructed. The calculations are completed by  ``calcavemutationantigenicnonantigenic.py`` and the plotting by
-``plotavemutationepitopetononepitope.py``.
+7. We compare the rate of epitope substitution to nonepitope substitution for M1 and NP. A summary plot that contains all the values of this epitope to nonepitopesubstitution rate is also constructed. The calculations are completed by  ``calcavemutationantigenicnonantigenic.py`` and the plotting by ``plotavemutationepitopetononepitope.py``.
 
 8. To test if positive selection in M1 and NP epitopes, we perform dN/dS analysis using datamonkey. We plot our analysis looking at the proportion of epitope vs nonepitope sites with dN/dS >1. There is also a cumulative density plot of the dN/dS values for epitope vs nonepitope sites. This analysis is completed by ``simplifytree.py``, which simplifies the maximum clade credibility tree used as input to datamonkey and``dndsanalysis.py``, which creates the plots.
 
