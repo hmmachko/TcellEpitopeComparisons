@@ -1,7 +1,0 @@
-summary P values
-,M1 branch,M1 trunk,NP branch,NP trunk,HA branch,HA trunk
-fhuman/fswine,0.642900,0.480900,0.239400,0.003800
-,M1 human, M1 swine, NP human, NP swine, HA human, HA swine
-ftrunk/ftree,0.573500,0.574900,0.051500,0.976700
-,M1,NP,HA
-fhuman/fswine,0.444500,0.005800
