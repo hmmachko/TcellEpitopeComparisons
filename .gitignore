@@ -62,7 +62,7 @@ plots/cd8/fhuman_vs_fswine.pdf
 plots/dnds/\*combined\*
 swine/NP/\*test\*
 swine/M1/\*test\*
-human/NP/*\color\*
+untitled
 plots/cd8/*\branch\*
 human/M1/*\slurm\*
 human/NP/*\slurm\*
