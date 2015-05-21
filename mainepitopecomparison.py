@@ -18,7 +18,7 @@ def main():
     if sbatchepitopes:
         beast = subprocess.call(['python', epitoperunfile])
 
-    plotepitopesperprotein = False
+    plotepitopesperprotein = True
     epperprotein = '%s/scripts/plotepitopesperprotein.py' % os.getcwd()
     if plotepitopesperprotein:
         epitopesperprotein = subprocess.call(['python', epperprotein])
@@ -28,7 +28,7 @@ def main():
     if combinedRAxML:
         RAxML = subprocess.call(['python', combRAxML])
 
-    makecombinedXMLfile=True
+    makecombinedXMLfile=False
     xmlinputfile1 = '%s/scripts/CreateXML.py' % os.getcwd()
     if makecombinedXMLfile:
         xmlfile = subprocess.call(['python', xmlinputfile1])

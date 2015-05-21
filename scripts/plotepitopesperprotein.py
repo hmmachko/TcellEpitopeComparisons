@@ -49,6 +49,7 @@ def countepitopesperprotein(fname,counts):
             epitopecount += 1
     fx.close()
     print epitopecount
+    
     counts.append(epitopecount)
 
 def makedirectory(dirname):
@@ -144,7 +145,7 @@ def main():
 
         for protein in proteins:
             print protein
-            
+            infile = ('%s/human/%s/%scombinedepitopeslist.csv' %(os.getcwd(),protein,epitope))
             infile2 = ('%s/human/%s/%scombinedepitopesbysite.csv' %(os.getcwd(),protein,epitope))
             getepitopespersite = True
             if getepitopespersite:
