@@ -61,7 +61,7 @@ def readfiletodictionary(filename, makelist = False):
     else:
         return filedict, count,epitopecount
 
-def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlength,epitopecount,epitopeproportion,nonepitopeproportion):
+def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlength,epitopecount,epitopeproportion,nonepitopeproportion,posterior_positivesel_epitope, posterior_positivesel_nonepitope):
     '''This function is for the FUBAR file and first fixes the return in *filename* so that it is recognized by python and creates a new *outfile*. It then makes two lists, a list
     of dN/dS values for epitope sites and a list for nonepitope sites. From this list, this function calculates the proportion of sites (epitope or nonepitope)
     that have dN/dS values greater than 1. Epitope proportion and nonepitope proportions with dN/dS values greater than 1 are appened to a list and returned.
@@ -88,7 +88,10 @@ def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlengt
     dnds_nonepitope = []
     epgreaterthan1 = 0
     nonepgreaterthan1 = 0
-
+    posterior_positiveselection_epitope = []
+    posterior_positiveselection_nonepitope = []
+    propposterior_epitope = 0
+    propposterior_nonepitope = 0
     print 'checking adjusted file'
     f = open(outfile,'r')
     with f as fx:
@@ -97,21 +100,37 @@ def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlengt
             entry = lines.strip().split(',')
             if epitopedict[int(entry[0])] != 0:
                 dnds = float(entry[2])/float(entry[1])
+                posterior = float(entry[4])
+                posterior_positiveselection_epitope.append(float(entry[4]))
                 dnds_epitope.append(dnds)
                 if dnds >1:
                     epgreaterthan1 +=1
+                if posterior >0.9:
+                    print entry[0], entry[4]
+                    propposterior_epitope +=1
+                   
             else:
                 dnds = float(entry[2])/float(entry[1])
                 dnds_nonepitope.append(dnds)
+                posterior = float(entry[4])
+                posterior_positiveselection_epitope.append(float(entry[4]))
                 if dnds >1:
                     nonepgreaterthan1 +=1
+                if posterior >0.9:
+                    print entry[0], entry[4]
+                    propposterior_nonepitope +=1
+                    
     f.close()
     proportiongreaterthan1epitope = float(epgreaterthan1)/epitopecount
     proportiongreaterthan1nonepitope = float(nonepgreaterthan1)/(proteinlength -epitopecount)
     epitopeproportion.append(proportiongreaterthan1epitope)
     nonepitopeproportion.append(proportiongreaterthan1nonepitope)
-
-    return dnds_epitope,dnds_nonepitope,epitopeproportion, nonepitopeproportion
+    proportionposteriorpositiveepitope = float(propposterior_epitope)/epitopecount
+    proportionposteriorpositivenonepitope = float(propposterior_nonepitope)/(proteinlength -epitopecount)
+    posterior_positivesel_epitope.append(proportionposteriorpositiveepitope) 
+    posterior_positivesel_nonepitope.append(proportionposteriorpositivenonepitope)
+    print 'epitope posterior proportion: %s , epitope posterior proportion: %s' % (proportionposteriorpositiveepitope,proportionposteriorpositivenonepitope)
+    return dnds_epitope,dnds_nonepitope,epitopeproportion, nonepitopeproportion, posterior_positivesel_epitope, posterior_positivesel_nonepitope
 
 def dataappend(masterdata_dnds,human_dnds_epitope,human_dnds_nonepitope,swine_dnds_epitope,swine_dnds_nonepitope):
     ''' This function appends 4 lists (masterdata_dnds,human_dnds_epitope,human_dnds_nonepitope,swine_dnds_epitope,swine_dnds_nonepitope) 
@@ -144,14 +163,14 @@ def cumulativedensityplot(masterdata,outfile,xlabels):
         numberofdatapoints = len(data)
         sorted_data = np.sort(data)
         question = np.arange(sorted_data.size)
-        print question
+        #print question
 
         for i,points in enumerate(sorted_data):
             ypoint = (float(i)/numberofdatapoints) + (float(1)/numberofdatapoints)
             yaxis.append(ypoint)
-        print yaxis
-        print len(yaxis)
-        print len(question)
+       # print yaxis
+       # print len(yaxis)
+       # print len(question)
         #print sorted_data
         plota = matplotlib.pyplot.step(sorted_data, yaxis,label = xlabels[index])
         index +=1
@@ -168,7 +187,7 @@ def cumulativedensityplot(masterdata,outfile,xlabels):
     pylab.clf()
     pylab.close()
 
-def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile):
+def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile,yaxlim,yaxtitle,yaxticksend,yaxincrement):
     ''' This function creates a scatterplot with some connected lines. For our specific example, we are 
     plotting proportion dN/dS values greater than 1for human and swine epitope and nonepitope regions for M1 and NP. 
     On the x axis, we plot M1 human, M1 swine, NP human, NP swine. Thus the epitope and nonepitope values are both plotted at the same x-coordinate.
@@ -205,7 +224,8 @@ def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile):
     for d in datapointsd:
         d = 100*d
         e.append(d)
-
+    print 'values for plotting'
+    print datapointsa,datapointsb,datapointsc,datapointsd
     x_val = [1,2]
     x_val2 = [3,4]
     matplotlib.rcParams['legend.handlelength'] = 0
@@ -216,28 +236,34 @@ def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile):
     matplotlib.pyplot.plot(x_val, c, '-o',label = 'nonepitope',color = [255/256.0,128/256.0,14/256.0],markersize=15,linewidth=3)
     matplotlib.pyplot.plot(x_val2, e, '-o',color = [255/256.0,128/256.0,14/256.0],markersize=15,linewidth=3)
 
-    print 'values for plotting'
-    print datapointsa,datapointsb,datapointsc,datapointsd
-    matplotlib.pyplot.ylabel('% sites with dN/dS > 1',fontsize = 30)
+    #print 'values for plotting'
+    #print datapointsa,datapointsb,datapointsc,datapointsd
+    matplotlib.pyplot.ylabel(yaxtitle,fontsize = 30)
     matplotlib.pyplot.xlabel('M1                     NP',fontsize = 30)
-    if 'FEL' in plotfile:
+    
+    if 'significant'in plotfile:
+        print 'posterior'
+        matplotlib.pyplot.legend(loc=0, fontsize = 30)
+    elif ('FEL' in plotfile) and ('dnds' in plotfile):
+        print 'fel and dnds'
         matplotlib.pyplot.legend(loc=4, fontsize = 30)
     else:
+        print 'other'
         matplotlib.pyplot.legend(fontsize = 30)
     xlabs = ['human','swine','human','swine','human','swine']
     xtick = [1,2,3,4]
     matplotlib.pyplot.xticks(xtick,xlabs, fontsize = 30)
     matplotlib.pyplot.yticks(fontsize = 30)   
     matplotlib.pyplot.xlim([0.5, 4.5])
-    matplotlib.pyplot.ylim(-1,14)
-    matplotlib.pyplot.yticks(np.arange(0, 13, 4))
+    matplotlib.pyplot.ylim(-0.5,yaxticksend)
+    matplotlib.pyplot.yticks(np.arange(0,yaxticksend,yaxincrement))
     matplotlib.pyplot.tight_layout()
     pylab.show()
     pylab.savefig(plotfile)
     pylab.clf()
     pylab.close() 
 
-def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinlength,epitopecount,epitopeproportion,nonepitopeproportion):
+def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinlength,epitopecount,epitopeproportion,nonepitopeproportion,epitopeposselproportion,nonepitopeposselproportion):
     '''This function is for the FEL file and first fixes the return in *filename* so that it is recognized by python and creates a new *outfile*. It then makes two lists, a list
     of dN/dS values for epitope sites and a list for nonepitope sites. From this list, this function calculates the proportion of sites (epitope or nonepitope)
     that have dN/dS values greater than 1. Epitope proportion and nonepitope proportions with dN/dS values greater than 1 are appened to a list and returned.
@@ -269,6 +295,8 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
     nonepundefined = 0
     epgreaterthan1 = 0
     nonepgreaterthan1 = 0
+    proppossel_epitope=0
+    proppossel_nonepitope =0
     f = open(outfile,'r')
     with f as fx:
         next(fx)
@@ -277,6 +305,7 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
             #print entry
             #print entry[3]
             if epitopedict[int(entry[0])] != 0:
+               
                 if entry[3] != 'Undefined':
                     if entry[3] == 'Infinite':
                         epgreaterthan1 +=1
@@ -284,14 +313,27 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
                         epgreaterthan1 +=1
                     else:
                         continue
+                if float(entry[4]) >0:
+                    if float(entry[8]) <0.1:
+                        print entry[0], entry[8]
+                        proppossel_epitope +=1
+                    else:
+                        continue
 
             else:
+              
                 if entry[3] != 'Undefined':
 
                     if entry[3] == 'Infinite':
                         nonepgreaterthan1 +=1
                     elif float(entry[3]) > 1:
                         nonepgreaterthan1 +=1
+                    else:
+                        continue
+                if float(entry[4]) >0:
+                    if float(entry[8]) <0.1:
+                        print entry[0], entry[8]
+                        proppossel_nonepitope +=1
                     else:
                         continue
 
@@ -299,15 +341,19 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
     proportiongreaterthan1nonepitope = float(nonepgreaterthan1)/(proteinlength -epitopecount)
     epitopeproportion.append(proportiongreaterthan1epitope)
     nonepitopeproportion.append(proportiongreaterthan1nonepitope)
-  
+    #####finish
+    proportiongposselepitope = float(proppossel_epitope)/epitopecount
+    proportionposselnonepitope = float(proppossel_nonepitope)/(proteinlength -epitopecount)
+    epitopeposselproportion.append(proportiongposselepitope)
+    nonepitopeposselproportion.append(proportionposselnonepitope)
     totalep = 0
     totalnonep = 0
     for entry in norm_dnds_epitope:
         totalep+=entry
     for entry in norm_dnds_nonepitope:
         totalnonep+= entry
-
-    return epitopeproportion, nonepitopeproportion
+    print 'FEL epitope: %s nonepitope: %s' % (epitopeposselproportion, nonepitopeposselproportion)
+    return epitopeproportion, nonepitopeproportion, epitopeposselproportion,nonepitopeposselproportion
 
 def makedirectory(dirname):
     '''This function checks if a directory exists, and if it doesn't, it creates the directory
@@ -318,7 +364,7 @@ def makedirectory(dirname):
        
 def main():
     dnds_analysis = ('FUBAR','FEL')
-    seq_format = ('alignedseq','usertree')  #'usertree'
+    seq_format = ('alignedseq','usertree') 
     checkdirectory = True 
     outputsubdir = '%s/plots/dnds'%(os.getcwd())          
     if checkdirectory:
@@ -357,7 +403,14 @@ def main():
                 '%s/plots/dnds/%s_%s_proportionhighdnds.pdf' % (os.getcwd(),analysistype,seq),
 
                 )
+            proportionposteriorsignificantFUBAR = (
+                '%s/plots/dnds/%s_%s_proportionposteriorsignificant.pdf' % (os.getcwd(),analysistype,seq),
 
+                )
+            proportionsignificantFEL = (
+                '%s/plots/dnds/%s_%s_proportionsignificant.pdf' % (os.getcwd(),analysistype,seq),
+
+                )
             masterproteinproportion_humanepitope = []
             masterproteinproportion_humannonepitope = []
             masterproteinproportion_swineepitope = []
@@ -368,6 +421,14 @@ def main():
             M1nonepitopeproportion = []
             NPepitopeproportion = []
             NPnonepitopeproportion = []
+            M1epitopeposteriorproportion = []
+            M1nonepitopeposteriorproportion = []
+            NPepitopeposteriorproportion = [] 
+            NPnonepitopeposteriorproportion = []
+            M1posselepitope = [] 
+            M1posselnonepitope = []
+            NPposselepitope = []
+            NPposselnonepitope=[]
             readepitopes = True
             if readepitopes:             
                 M1epitopes,M1proteinlength,M1epitopesites = readfiletodictionary(epitopefiles[0], makelist = False)
@@ -375,19 +436,19 @@ def main():
             getdndsvalues = True
             if getdndsvalues:
                 if analysistype == 'FUBAR':
-                    print humanfiles[0]
+                    #print humanfiles[0]
                     print adjustedhumanfiles[0]
-                    M1_human_dnds_epitope,M1_human_dnds_nonepitope,M1epitopeproportion,M1nonepitopeproportion = separateepitopeandnonepitopevalues(humanfiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion)
-                    M1_swine_dnds_epitope,M1_swine_dnds_nonepitope,M1epitopeproportion,M1nonepitopeproportion = separateepitopeandnonepitopevalues(swinefiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion)
-                    NP_human_dnds_epitope,NP_human_dnds_nonepitope,NPepitopeproportion,NPnonepitopeproportion = separateepitopeandnonepitopevalues(humanfiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion)
-                    NP_swine_dnds_epitope,NP_swine_dnds_nonepitope,NPepitopeproportion,NPnonepitopeproportion = separateepitopeandnonepitopevalues(swinefiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion)
-                   
+                    M1_human_dnds_epitope,M1_human_dnds_nonepitope,M1epitopeproportion,M1nonepitopeproportion, M1epitopeposteriorproportion, M1nonepitopeposteriorproportion = separateepitopeandnonepitopevalues(humanfiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion,M1epitopeposteriorproportion, M1nonepitopeposteriorproportion)
+                    M1_swine_dnds_epitope,M1_swine_dnds_nonepitope,M1epitopeproportion,M1nonepitopeproportion,M1epitopeposteriorproportion, M1nonepitopeposteriorproportion = separateepitopeandnonepitopevalues(swinefiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion,M1epitopeposteriorproportion, M1nonepitopeposteriorproportion)
+                    NP_human_dnds_epitope,NP_human_dnds_nonepitope,NPepitopeproportion,NPnonepitopeproportion,NPepitopeposteriorproportion, NPnonepitopeposteriorproportion = separateepitopeandnonepitopevalues(humanfiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion,NPepitopeposteriorproportion, NPnonepitopeposteriorproportion)
+                    NP_swine_dnds_epitope,NP_swine_dnds_nonepitope,NPepitopeproportion,NPnonepitopeproportion,NPepitopeposteriorproportion, NPnonepitopeposteriorproportion = separateepitopeandnonepitopevalues(swinefiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion,NPepitopeposteriorproportion, NPnonepitopeposteriorproportion)
+                  
                 if analysistype == 'FEL':
-                    M1epitopeproportion, M1nonepitopeproportion = separateepitopeandnonepitopevalues2(humanfiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion)
-                    M1epitopeproportion, M1nonepitopeproportion = separateepitopeandnonepitopevalues2(swinefiles[0],M1epitopes,adjustedswinefiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion)
-                    NPepitopeproportion, NPnonepitopeproportion = separateepitopeandnonepitopevalues2(humanfiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion)
-                    NPepitopeproportion, NPnonepitopeproportion = separateepitopeandnonepitopevalues2(swinefiles[1],NPepitopes,adjustedswinefiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion)
-                    
+                    M1epitopeproportion, M1nonepitopeproportion, M1posselepitope, M1posselnonepitope = separateepitopeandnonepitopevalues2(humanfiles[0],M1epitopes,adjustedhumanfiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion,M1posselepitope, M1posselnonepitope)
+                    M1epitopeproportion, M1nonepitopeproportion, M1posselepitope, M1posselnonepitope = separateepitopeandnonepitopevalues2(swinefiles[0],M1epitopes,adjustedswinefiles[0],M1proteinlength,M1epitopesites,M1epitopeproportion,M1nonepitopeproportion,M1posselepitope, M1posselnonepitope)
+                    NPepitopeproportion, NPnonepitopeproportion, NPposselepitope, NPposselnonepitope = separateepitopeandnonepitopevalues2(humanfiles[1],NPepitopes,adjustedhumanfiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion, NPposselepitope, NPposselnonepitope)
+                    NPepitopeproportion, NPnonepitopeproportion, NPposselepitope, NPposselnonepitope = separateepitopeandnonepitopevalues2(swinefiles[1],NPepitopes,adjustedswinefiles[1],NPproteinlength,NPepitopesites,NPepitopeproportion,NPnonepitopeproportion, NPposselepitope, NPposselnonepitope)
+                   
             if analysistype == 'FUBAR':
                 appenddata = True
             if appenddata:
@@ -404,7 +465,31 @@ def main():
                
             plotallproteins = True
             if plotallproteins:
-                scatterplot(M1epitopeproportion,NPepitopeproportion,M1nonepitopeproportion,NPnonepitopeproportion, proportiondndsgreater1plotoutfiles[0])
+                yaxtitle = '% sites with dN/dS > 1'
+                yaxlim=[-1,14]
+                yaxticksend=13
+                yaxincrement=4
+                
+                scatterplot(M1epitopeproportion,NPepitopeproportion,M1nonepitopeproportion,NPnonepitopeproportion, proportiondndsgreater1plotoutfiles[0],yaxlim,yaxtitle,yaxticksend,yaxincrement)
+            if analysistype =='FUBAR':
+                plotproportionposterior = True
+                yaxlim=[-.5,4]
+                yaxticksend=3.5
+                yaxincrement=1
+                yaxtitle = '% sites under selection'
+                if plotproportionposterior:
+                    scatterplot(M1epitopeposteriorproportion,NPepitopeposteriorproportion,M1nonepitopeposteriorproportion,NPnonepitopeposteriorproportion, proportionposteriorsignificantFUBAR[0],yaxlim,yaxtitle,yaxticksend,yaxincrement)
+
+            if analysistype =='FEL':
+                plotproportionpossel = True
+                yaxlim=[-.5,4]
+                yaxticksend=3.5
+                yaxincrement=1
+                yaxtitle = '% sites under selection'
+                if plotproportionpossel:
+
+
+                    scatterplot(M1posselepitope,NPposselepitope,M1posselnonepitope,NPposselnonepitope, proportionsignificantFEL[0],yaxlim,yaxtitle,yaxticksend,yaxincrement)   
 
 
 main()

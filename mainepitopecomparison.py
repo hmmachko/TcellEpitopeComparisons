@@ -18,7 +18,7 @@ def main():
     if sbatchepitopes:
         beast = subprocess.call(['python', epitoperunfile])
 
-    plotepitopesperprotein = True
+    plotepitopesperprotein = False
     epperprotein = '%s/scripts/plotepitopesperprotein.py' % os.getcwd()
     if plotepitopesperprotein:
         epitopesperprotein = subprocess.call(['python', epperprotein])
@@ -88,6 +88,10 @@ def main():
         f = subprocess.call(['python2',fplot])
 
 
+    siteentropy = True
+    entropyplot = '%s/scripts/plotsiteentropy.py' % os.getcwd()
+    if siteentropy:
+        plotentropy = subprocess.call(['python',entropyplot])
 
 
 
