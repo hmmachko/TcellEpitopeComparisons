@@ -1,6 +1,8 @@
 '''
 This analysis makes plots from 2 types of dN/dS analysis (FUBAR and FEL) for human and swine M1 and NP. 
 The first plot is made for both FUBAR and FEL data and is the proportion of sites that have dN/dS > 1 for epitope sites and nonepitope sites. 
+Additionally, for epitope and nonepitope sites, the proportion of sites with support for statistical signficance for dN/dS > 1 is plotted 
+(FUBAR posterior >0.95, FEL < 0.05).
 The second plot is the cumulative density plot of dN/dS values, and is done for FUBAR analysis.  
 
 Functions
@@ -19,9 +21,14 @@ Input files
 -------------
 *``protein_dNdStype_report.csv``: dN/dS report. protein is M1 or NP and dNdStype is FUBAR or FEL, located in each host protein folder
 *``cd8combinedepitopesbysite.csv`` : epitopes per site file, in host protein folder
+
+Output files
+-------------
 *``protein_FUBAR_cumulativedensity_dnds.pdf`` : cumulative density plot, protein is M1 or NP
 *``protein_dNdStype_report_fix.csv`` : adjusted format dN/dS report. protein is M1 or NP and dNdStype is FUBAR or FEL, located in each host protein folder
 *``proportionhighdnds.pdf`` : plot with proportion of sites that have dN/dS > 1
+*``proportionposteriorsignificant.pdf`` : plot with proportion of sites with signficant evidence for dN/dS > 1 for FUBAR
+*``proportionsignificant.pdf`` : plot with proportion of sites with signficant evidence for dN/dS > 1 for FEL
 '''
 import os
 import matplotlib
@@ -105,7 +112,7 @@ def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlengt
                 dnds_epitope.append(dnds)
                 if dnds >1:
                     epgreaterthan1 +=1
-                if posterior >0.9:
+                if posterior >0.95:
                     print entry[0], entry[4]
                     propposterior_epitope +=1
                    
@@ -116,7 +123,7 @@ def separateepitopeandnonepitopevalues(filename,epitopedict,outfile,proteinlengt
                 posterior_positiveselection_epitope.append(float(entry[4]))
                 if dnds >1:
                     nonepgreaterthan1 +=1
-                if posterior >0.9:
+                if posterior >0.95:
                     print entry[0], entry[4]
                     propposterior_nonepitope +=1
                     
@@ -189,7 +196,7 @@ def cumulativedensityplot(masterdata,outfile,xlabels):
 
 def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile,yaxlim,yaxtitle,yaxticksend,yaxincrement):
     ''' This function creates a scatterplot with some connected lines. For our specific example, we are 
-    plotting proportion dN/dS values greater than 1for human and swine epitope and nonepitope regions for M1 and NP. 
+    plotting proportion dN/dS values greater than 1 for human and swine epitope and nonepitope regions for M1 and NP. 
     On the x axis, we plot M1 human, M1 swine, NP human, NP swine. Thus the epitope and nonepitope values are both plotted at the same x-coordinate.
     The values for epitope human and swine (for a protein) have a line connecting them. The same is true for nonepitope 
     human and swine.
@@ -231,19 +238,19 @@ def scatterplot(datapointsa,datapointsb,datapointsc,datapointsd,plotfile,yaxlim,
     matplotlib.rcParams['legend.handlelength'] = 0
     matplotlib.rcParams['legend.numpoints'] = 1
     matplotlib.rcParams['legend.borderpad'] =.5 
-    matplotlib.pyplot.plot(x_val, a, '-o',label = 'epitope',color = [95/256.0,158/256.0,209/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, b, '-o',color = [95/256.0,158/256.0,209/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val, c, '-o',label = 'nonepitope',color = [255/256.0,128/256.0,14/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, e, '-o',color = [255/256.0,128/256.0,14/256.0],markersize=15,linewidth=3)
+    matplotlib.pyplot.plot(x_val, a, '-o',label = 'epitope',color = [95/256.0,158/256.0,209/256.0],markersize=25,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val2, b, '-o',color = [95/256.0,158/256.0,209/256.0],markersize=25,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val, c, '--x',label = 'nonepitope',color = [255/256.0,128/256.0,14/256.0],markersize=22,linewidth=3,mew=4)
+    matplotlib.pyplot.plot(x_val2, e, '--x',color = [255/256.0,128/256.0,14/256.0],markersize=22,linewidth=3,mew=4)
 
     #print 'values for plotting'
     #print datapointsa,datapointsb,datapointsc,datapointsd
     matplotlib.pyplot.ylabel(yaxtitle,fontsize = 30)
-    matplotlib.pyplot.xlabel('M1                     NP',fontsize = 30)
+    matplotlib.pyplot.xlabel('M1                    NP',fontsize = 30)
     
     if 'significant'in plotfile:
         print 'posterior'
-        matplotlib.pyplot.legend(loc=0, fontsize = 30)
+        matplotlib.pyplot.legend(loc=2, fontsize = 30)
     elif ('FEL' in plotfile) and ('dnds' in plotfile):
         print 'fel and dnds'
         matplotlib.pyplot.legend(loc=4, fontsize = 30)
@@ -314,7 +321,7 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
                     else:
                         continue
                 if float(entry[4]) >0:
-                    if float(entry[8]) <0.1:
+                    if float(entry[8]) <0.05:
                         print entry[0], entry[8]
                         proppossel_epitope +=1
                     else:
@@ -331,7 +338,7 @@ def separateepitopeandnonepitopevalues2(filename,epitopedict,outfile,proteinleng
                     else:
                         continue
                 if float(entry[4]) >0:
-                    if float(entry[8]) <0.1:
+                    if float(entry[8]) <0.05:
                         print entry[0], entry[8]
                         proppossel_nonepitope +=1
                     else:
@@ -476,7 +483,7 @@ def main():
                 yaxlim=[-.5,4]
                 yaxticksend=3.5
                 yaxincrement=1
-                yaxtitle = '% sites under selection'
+                yaxtitle = '% sites with dN/dS > 1\n(PP>0.95)'
                 if plotproportionposterior:
                     scatterplot(M1epitopeposteriorproportion,NPepitopeposteriorproportion,M1nonepitopeposteriorproportion,NPnonepitopeposteriorproportion, proportionposteriorsignificantFUBAR[0],yaxlim,yaxtitle,yaxticksend,yaxincrement)
 
@@ -485,7 +492,7 @@ def main():
                 yaxlim=[-.5,4]
                 yaxticksend=3.5
                 yaxincrement=1
-                yaxtitle = '% sites under selection'
+                yaxtitle = '% sites with dN/dS > 1\n(P<0.05)'
                 if plotproportionpossel:
 
 

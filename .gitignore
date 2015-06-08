@@ -68,3 +68,7 @@ human/M1/*\slurm\*
 human/NP/*\slurm\*
 swine/NP/*\slurm\*
 swine/M1/*\slurm\*
+dnds/FEL/alignedseq/\*HA\*
+dnds/FEL/usertree/\*HA\*
+dnds/FUBAR/usertree/\*HA\*
+dnds/FUBAR/alignedseq/\*HA\*

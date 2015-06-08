@@ -78,10 +78,10 @@ def scatterplot(datapointsa,datapointsb,datapointsd,datapointse,plotfile):
     matplotlib.rcParams['legend.handlelength'] = 0
     matplotlib.rcParams['legend.numpoints'] = 1
     matplotlib.rcParams['legend.borderpad'] =.5 
-    matplotlib.pyplot.plot(x_val, datapointsa, '-o',label = 'tree',color = [210/256.0,94/256.0,202/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, datapointsb, '-o',color = [210/256.0,94/256.0,202/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val, datapointsd, '-o',label = 'trunk',color = [94/256.0,210/256.0,114/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, datapointse, '-o',color = [94/256.0,210/256.0,114/256.0],markersize=15,linewidth=3)
+    matplotlib.pyplot.plot(x_val, datapointsa, '-o',label = 'tree',color = [210/256.0,94/256.0,202/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val2, datapointsb, '-o',color = [210/256.0,94/256.0,202/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val, datapointsd, '-o',label = 'trunk',color = [94/256.0,210/256.0,114/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val2, datapointse, '-o',color = [94/256.0,210/256.0,114/256.0],markersize=20,linewidth=3,mew=0)
     matplotlib.pyplot.ylabel('epitope/nonepitope rate',fontsize = 30)
     matplotlib.pyplot.xlabel('M1                    NP',fontsize = 30)
     matplotlib.pyplot.legend(loc=4, fontsize = 30)

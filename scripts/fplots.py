@@ -88,7 +88,7 @@ def makeviolinplot(datalists,plotfile,masterdeltaf,xlabs,ylab,pos,yax,xtitle):
     fig, ax = matplotlib.pyplot.subplots()
     plot = matplotlib.pyplot.violinplot(datalists, pos, points=60, widths=0.4, showmeans=False,
                       showextrema=False, showmedians=True, bw_method="scott")
-    plot = matplotlib.pyplot.scatter(pos,masterdeltaf,s=100, color='Red')
+    plot = matplotlib.pyplot.scatter(pos,masterdeltaf,s=120, color='Red')
     matplotlib.pyplot.xlabel(xtitle,fontsize = 30)
     matplotlib.pyplot.ylim(yax)
     ax.set_xticks(pos)
@@ -96,7 +96,7 @@ def makeviolinplot(datalists,plotfile,masterdeltaf,xlabs,ylab,pos,yax,xtitle):
     ax.set_ylabel(ylab,fontsize = 30)
     matplotlib.pyplot.yticks(fontsize = 30)
     matplotlib.pyplot.tight_layout()
-    if 'testratiotrunktree.pdf' in plotfile:
+    if 'ratiotrunktree.pdf' in plotfile:
         matplotlib.pyplot.yticks(np.arange(0, 3.1, 1))
 
     pylab.show()
@@ -142,10 +142,10 @@ def scatterplot(data1,data2,data3,data4,data5,data6,data7,data8,plotfile):
     matplotlib.rcParams['legend.numpoints'] = 1
     matplotlib.rcParams['legend.borderpad'] =.5 
 
-    matplotlib.pyplot.plot(x_val, datapointsa, '-o',label = 'tree',color = [210/256.0,94/256.0,202/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, datapointsb, '-o',color = [210/256.0,94/256.0,202/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val, datapointsc, '-o',label = 'trunk',color = [94/256.0,210/256.0,114/256.0],markersize=15,linewidth=3)
-    matplotlib.pyplot.plot(x_val2, datapointsd, '-o',color = [94/256.0,210/256.0,114/256.0],markersize=15,linewidth=3)
+    matplotlib.pyplot.plot(x_val, datapointsa, '-o',label = 'tree',color = [210/256.0,94/256.0,202/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val2, datapointsb, '-o',color = [210/256.0,94/256.0,202/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val, datapointsc, '-o',label = 'trunk',color = [94/256.0,210/256.0,114/256.0],markersize=20,linewidth=3,mew=0)
+    matplotlib.pyplot.plot(x_val2, datapointsd, '-o',color = [94/256.0,210/256.0,114/256.0],markersize=20,linewidth=3,mew=0)
     matplotlib.pyplot.ylabel('$F$',fontsize = 30)
     matplotlib.pyplot.xlabel('M1                    NP',fontsize = 30)
     matplotlib.pyplot.legend(loc=2, fontsize = 30)
@@ -260,7 +260,7 @@ def main():
     plothumanswinefratio = True
     pos =  [1,2,3.5,4.5]
     xlabs = ['trunk','tree','trunk','tree']
-    xtitle = 'M1                     NP'
+    xtitle = 'M1                        NP'
     ylab = '$F_{human}/F_{swine}$'
     plotfile = '%s/plots/cd8/ratiofhumanswine.pdf' % (os.getcwd())
     yax = [-0.5, 6]
@@ -271,6 +271,7 @@ def main():
     plottrunktotree = True
     plotfile = '%s/plots/cd8/ratiotrunktree.pdf' % (os.getcwd())
     xlabs = ['human','swine','human','swine']
+    xtitle = 'M1                      NP'
     ylab = '$F_{trunk}/F_{tree}$' #r_{ijk} #'$\frac{F_{trunk}}/{F_{tree}}$'
     yax = [-0.1, 3]
     if plottrunktotree:
