@@ -1,3 +1,20 @@
+'''This script calculates the maximum divergence (amino acid) between two sequences for M1 and NP for each host. 
+The results are recorded (% divergence and the sequence names)
+
+Functions:
+------------
+*``calcdivergence``: calculates divergence and writes summary
+
+Input files:
+-------------
+*``prot_aligned.fasta``: fasta sequences
+
+Output files:
+---------------
+*``summarydivergence.csv``: summary of % divergence
+
+'''
+
 import os
 import listFASTA
 
@@ -45,11 +62,7 @@ def main():
         '%s/human/NP/prot_aligned.fasta' % os.getcwd(),
         '%s/swine/M1/prot_aligned.fasta' % os.getcwd(),
         '%s/swine/NP/prot_aligned.fasta' % os.getcwd(),]
-    csvfile = [
-        '%s/human/M1/prot_aligned_format.fasta' % os.getcwd(),
-        '%s/human/NP/prot_aligned_format.fasta' % os.getcwd(),
-        '%s/swine/M1/prot_aligned_format.fasta' % os.getcwd(),
-        '%s/swine/NP/prot_aligned_format.fasta' % os.getcwd(),]
+
     summaryfile = '%s/plots/summarydivergence.csv' % os.getcwd()
     f = open(summaryfile, 'w')
     f.close()

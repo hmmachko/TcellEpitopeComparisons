@@ -52,6 +52,7 @@ Subscripts
 * ``dndsanalysis.py`` 
 * ``fanalysis.py`` 
 * ``fplots.py``
+* ``maxsequencedivergence.py``
 
 Steps in analysis
 -------------------
@@ -64,17 +65,19 @@ Analysis can be run in the terminal by typing: python mainepitopecomparison.py
 
 3. We summarize the findings of epitope finder by plotting the number of epitopes in each protein and the distribution of epitopes in each protein by ``plotepitopesperprotein.py``. We restrict the rest of the analysis to M1 and NP because they contain by far the most epitopes.
 
-4. We build separate protein phylogenies for the human and swine M1 and NP using `BEAST`_. This is accomplished by ``CreateSeparateXML.py`` (which creates the BEAST input file), ``sbatchseparatephylogenies.py`` (which runs BEAST), and ``MakeMaxCladeCred.py`` (which makes a maximum clade credibility tree).
+4. We build separate protein phylogenies for the human and swine M1 and NP using `BEAST`_. This is accomplished by ``CreateSeparateXML.py`` (which creates the `BEAST`_ input file), ``sbatchseparatephylogenies.py`` (which runs `BEAST`_), and ``MakeMaxCladeCred.py`` (which makes a maximum clade credibility tree).
 
-5. We also build combined protein phylogenies for human and swine M1 and NP to determine the time to common ancestor. This is accomplished by ``raxmlhumanswinecombtree.py`` (makes quick tree to check for anamalous sequences), ``CreateXML.py`` (makes input file for BEAST) and ``sbatchphylogenies.py`` (runs BEAST).
+5. We also build combined protein phylogenies for human and swine M1 and NP to determine the time to common ancestor. This is accomplished by ``raxmlhumanswinecombtree.py`` (makes quick tree to check for anamalous sequences), ``CreateXML.py`` (makes input file for `BEAST`_) and ``sbatchphylogenies.py`` (runs `BEAST`_).
 
 6. We next calculate the average number of substitutions that occur at each amino acid site in M1 and NP. This will be used for later analysis. This is accomplished by ``calcaveragemutationpersite.py``. 
 
 7. We compare the rate of epitope substitution to nonepitope substitution for M1 and NP. A summary plot that contains all the values of this epitope to nonepitopesubstitution rate is also constructed. The calculations are completed by  ``calcavemutationantigenicnonantigenic.py`` and the plotting by ``plotavemutationepitopetononepitope.py``.
 
-8. To test for positive selection in M1 and NP epitopes, we perform dN/dS analysis using `Datamonkey`_. We ran two types of dN/dS analysis: `FUBAR`_ (empirical Bayes method) and `FEL`_ (maximum likelihood method). For both analyses, we used both the aligned cDNA sequences and the maximum clade credibility tree from `BEAST`_. A REV substitution model was specified for `FEL`_. The output from `Datamonkey`_ is saved to the dnds folder. We calculate and plot the proportion of epitope vs nonepitope sites with dN/dS >1. We also plot the percentage of sites for which there was strong statistical support for dN/dS being greater than one (posterior probability > 0.95 for `FUBAR`_; P-value < 0.05 for `FEL`_). There is also a cumulative density plot of the dN/dS values for epitope vs nonepitope sites. This analysis is completed by ``simplifytree.py``, which simplifies the maximum clade credibility tree used as input to `Datamonkey`_ and``dndsanalysis.py``, which creates the plots.
+8. To test for positive selection in M1 and NP epitopes, we perform dN/dS analysis using `Datamonkey`_. We ran two types of dN/dS analysis: `FUBAR`_ (empirical Bayes method) and `FEL`_ (maximum likelihood method). For both analyses, we used both the aligned cDNA sequences and the maximum clade credibility tree from `BEAST`_. A REV substitution model was specified for `FEL`_. The output from `Datamonkey`_ is saved to the dnds folder. We calculate and plot the proportion of epitope vs nonepitope sites with dN/dS >1. We also plot the percentage of sites for which there was strong statistical support for dN/dS being greater than one (posterior probability > 0.95 for `FUBAR`_; P-value < 0.05 for `FEL`_). There is also a cumulative density plot of the dN/dS values for epitope vs nonepitope sites. This analysis is completed by ``simplifytree.py``, which simplifies the maximum clade credibility tree used as input to `Datamonkey`_ and ``dndsanalysis.py``, which creates the plots.
 
 9. We develop another measure to detect positive selection by calculating how many epitopes are contained in an average substitution (denoted as f). We do this for human and swine for the whole tree and just the trunk. We evaluate if human influenza has more epitopes changing than swine in a substitution by computing fhuman/fswine. We also assess if the trunk has an enrichment of epitope-altering substitutions in comparison to the tree by computing ftrunk/ftree. We evaluate significance of these comparisons by making null distributions and calculating p-values. This is done by ``fanalysis.py`` (calculates f values and randomized f values) and ``fplots.py`` (makes summary plots of f values, fhuman/fswine, and ftrunk/ftree and records p-values). 
+
+10. We calculated the maximum % amino acid sequence divergence between 2 protein sequences within a host for NP and M1. This is done by ``maxsequencedivergence.py``. 
 
 
 
