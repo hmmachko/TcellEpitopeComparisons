@@ -87,13 +87,6 @@ def main():
     if plotf:
         f = subprocess.call(['python2',fplot])
 
-
-    siteentropy = False
-    entropyplot = '%s/scripts/plotsiteentropy.py' % os.getcwd()
-    if siteentropy:
-        plotentropy = subprocess.call(['python2',entropyplot])
-
-
     maxdivergence = True
     divergencecalc = '%s/scripts/maxsequencedivergence.py' % os.getcwd()
     if maxdivergence:
