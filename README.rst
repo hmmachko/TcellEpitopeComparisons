@@ -31,7 +31,7 @@ Software used
 Main script
 --------------
 * ``mainepitopecomparison.py`` : main `Python`_ script runs all steps in the analysis through subscripts listed below. 
-A more detailed description of the scrips can be found in each subscript.
+A more detailed description of the steps can be found in each subscript.
 
 Subscripts
 -------------
