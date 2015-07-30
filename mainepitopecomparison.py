@@ -54,16 +54,16 @@ def main():
         tree = subprocess.call(['python',maketree])
 
     calculateavemutationpersite = False
-    avemutationpersite = '%s/scripts/calcaveragemutationpersite.py' % os.getcwd()
+    avemutationpersite = '%s/scripts/runcalcavesub.sbatch' % os.getcwd()
     if calculateavemutationpersite:
-        mutationspersite = subprocess.call(['python',avemutationpersite])
+        mutationspersite = subprocess.call(['sbatch',avemutationpersite])
 
     calcmutationantigentononantigen = False
     antigenictononantigeniccalc = '%s/scripts/calcavemutationantigenicnonantigenic.py' % os.getcwd()
     if calcmutationantigentononantigen:        
         antigenvsnonantigen = subprocess.call(['python',antigenictononantigeniccalc])
 
-    plotantigentononantigen = False
+    plotantigentononantigen = True
     plotantigenictononantigenic = '%s/scripts/plotavemutationepitopetononepitope.py' % os.getcwd()
     if plotantigentononantigen:
         plotantigenvsnonantigen =  subprocess.call(['python',plotantigenictononantigenic])
@@ -82,15 +82,25 @@ def main():
     if calcf:
         f = subprocess.call(['python',fcalculation])
 
-    plotf = False
+    plotf = True
     fplot = '%s/scripts/fplots.py' % os.getcwd()
     if plotf:
         f = subprocess.call(['python2',fplot])
 
-    maxdivergence = True
+    maxdivergence = False
     divergencecalc = '%s/scripts/maxsequencedivergence.py' % os.getcwd()
     if maxdivergence:
         mdiverg = subprocess.call(['python',divergencecalc])
+
+    trunksubstitutionsummary = True
+    trunksubsum = '%s/scripts/runavesubtimeidentity.sbatch' % os.getcwd()
+    if trunksubstitutionsummary:
+        tsum = subprocess.call(['sbatch',trunksubsum])
+
+    #part2 = False
+    #subsummary = '%s/scripts/trunksubstitutionidentityandtime.py' % os.getcwd()
+    #if part2:
+        #tsum = subprocess.call(['python',subsummary])
 
 
 main()

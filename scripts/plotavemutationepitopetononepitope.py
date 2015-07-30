@@ -84,15 +84,15 @@ def scatterplot(datapointsa,datapointsb,datapointsd,datapointse,plotfile):
     matplotlib.pyplot.plot(x_val2, datapointse, '-o',color = [94/256.0,210/256.0,114/256.0],markersize=20,linewidth=3,mew=0)
     matplotlib.pyplot.ylabel('epitope/nonepitope rate',fontsize = 30)
     matplotlib.pyplot.xlabel('M1                    NP',fontsize = 30)
-    matplotlib.pyplot.legend(loc=4, fontsize = 30)
+    matplotlib.pyplot.legend(loc=3, fontsize = 30)
     xlabs = ['human','swine','human','swine','human','swine']
     xtick = [1,2,3,4]
     matplotlib.pyplot.xticks(xtick,xlabs, fontsize = 30)
     matplotlib.pyplot.axhline(y=1,linewidth=2,color='Black')
     matplotlib.pyplot.xlim([0.5, 4.5])
-    matplotlib.pyplot.ylim([-.1, 1.1])
+    matplotlib.pyplot.ylim([-.1, 1.3])
     matplotlib.pyplot.yticks(fontsize = 30)
-    matplotlib.pyplot.yticks(np.arange(0, 1.1, .25))
+    matplotlib.pyplot.yticks(np.arange(0, 1.3, .25))
     matplotlib.pyplot.tight_layout()
 
     pylab.show()

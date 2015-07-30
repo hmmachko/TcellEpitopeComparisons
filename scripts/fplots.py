@@ -154,7 +154,7 @@ def scatterplot(data1,data2,data3,data4,data5,data6,data7,data8,plotfile):
     matplotlib.pyplot.yticks(fontsize = 30)
     matplotlib.pyplot.xticks(xtick,xlabs, fontsize = 30)
     matplotlib.pyplot.xlim([0.5, 4.5])
-    matplotlib.pyplot.ylim([0, 1.6])
+    matplotlib.pyplot.ylim([0, 1.7])
     matplotlib.pyplot.yticks(np.arange(0, 1.7, .4))
     matplotlib.pyplot.tight_layout()
     pylab.show()

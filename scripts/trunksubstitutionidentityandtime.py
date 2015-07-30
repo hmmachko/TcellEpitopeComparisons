@@ -90,8 +90,8 @@ def gettaxanamedict(treefile,terminalnode):
                     nodedictionary[entry[0]] = '%s%sinf' % (addword,count)                           
     f.close()
     print termnode
-    for nodes in sorted(nodedictionary):
-        print nodes, nodedictionary[nodes]
+    #for nodes in sorted(nodedictionary):
+        #print nodes, nodedictionary[nodes]
          
     return nodedictionary, termnode
 
@@ -184,9 +184,10 @@ def tracetrunkfromlist(treelist, terminal):
         treetrace = [clade.comment for clade in tracet if clade.comment != None]
         treetrace = ', '.join(treetrace)
         tracelist.append(treetrace)
+        ###tracelist.append(str(tracet))
     return tracelist
  
-def getmutationsites(paths):
+def getmutationsites(paths,outfile):
     '''
     This function takes a list of newick trees in *paths* and finds the average number of substitutions that occur at each site.
     This result is returned as a dictionary with aa position as key and average number of substitutions as the value
@@ -194,21 +195,94 @@ def getmutationsites(paths):
     aa_dict = {}
     print "finding aa mutations"
     count = 0
+    f=open(outfile,'w')
     for path in paths:
-        #print path, type(path)
-        #raise ValueError('debugging 2')
+        #print path
         count+=1
-        for matchobj,aminoacidpos in re.findall("(\{([\d]*),)", path):
+        findsubs = re.findall("(\{([\d]*),([\d]*.[\d]*),(\w),(\w)})", path)
+        #print findsubs
+        for subinfo in findsubs:
 
-            #print aminoacidpos
-            if aminoacidpos not in aa_dict:
-                aa_dict[aminoacidpos] = 1
-            elif aminoacidpos in aa_dict:
-                aa_dict[aminoacidpos] += 1
-    for aminoacid in aa_dict:
-        aa_dict[aminoacid] = float(aa_dict[aminoacid])/count
-        print aminoacid, aa_dict[aminoacid]
-    return aa_dict
+            #print subinfo
+            #print subinfo[1]
+            #print subinfo[2]
+            #print subinfo[3]
+            #print subinfo[4]
+            f.write('%s%s%s:%s,' % (subinfo[3],subinfo[1],subinfo[4],subinfo[2]))
+        f.write('\n')
+
+    f.close()
+        #print re.findall("(\{([\d]*),([\d]*.[\d]*),(\w),(\w)})", path)
+        #for matchobj,aminoacidpos in re.findall("(\{([\d]*),([\d]*.[\d]*),)", path):
+            #for matchobj,aminoacidpos in re.findall("(\{([\d]*),([\d]*),(\w),(\w)})", path):
+            #print matchobj
+           # print aminoacidpos
+           # if aminoacidpos not in aa_dict:
+             #   aa_dict[aminoacidpos] = 1
+            #elif aminoacidpos in aa_dict:
+               # aa_dict[aminoacidpos] += 1
+    #for aminoacid in aa_dict:
+       # aa_dict[aminoacid] = float(aa_dict[aminoacid])/count
+       # print aminoacid, aa_dict[aminoacid]
+    #return aa_dict
+def consensustrunksub(subfile,consensusoutfile):
+    #print 'reading from subsummaryfile'
+    mastersublist = []
+    from collections import defaultdict
+    sitedict = defaultdict(list)
+    #consensussublist = {}
+    f= open(subfile,'r')
+    fx = open(consensusoutfile,'w')
+    count = 0
+    with f as allsubfile:
+        for line in allsubfile:
+            count+=1
+            entry = line.strip().split()
+            #print entry
+            mastersublist.append(entry)
+    f.close()
+
+    cutoff = float(count)*.9
+    print "cutoff: %s" % cutoff
+    for tree in mastersublist:
+        print "sub in tree: %s" % tree
+        #checkforduplicationslist = []
+        for substitutions in tree:
+            print "substitution level %s" % substitutions
+            checkforduplicationslist = []
+            #print substitution
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
+            for indivsub in subinfo:
+                checkforduplicationslist.append(indivsub[0])
+                #print indivsub[0], indivsub[1]
+                sitedict[indivsub[0]].append(indivsub[1])
+            #print 'length duplist %s' % len(checkforduplicationslist)
+
+            from collections import Counter         
+            print [k for k,v in Counter(checkforduplicationslist).items() if v>1]
+
+    for subidentity in sitedict:
+        if len(sitedict[subidentity]) > cutoff:
+            #print subidentity, sitedict[subidentity]
+            blengthtot = 0
+            subnumber = 0
+            for blength in sitedict[subidentity]:
+                blengthtot+=float(blength)
+                subnumber+=1
+            aveblength = float(blengthtot)/subnumber
+
+            fx.write('%s:%s\n' % (subidentity, aveblength))
+        else:
+            continue
+            #print "not consensus %s %s %s" % (subidentity, sitedict[subidentity], len(sitedict[subidentity]))
+            #print subinfo
+           # print subinfo[1]
+            #print subinfo[1][1]
+            #print subinfo[2]
+            #sitedict[]
+    fx.close()
+    
+
 
 def writeoutfile(aadict, outfile, lengthprot):
     '''
@@ -239,22 +313,20 @@ def main():
                 '%s/swine/M1/prot_aligned.trees' % os.getcwd(),        
                 )
 
-    treeoutfiles = (
-                '%s/human/NP/treeavemutationpersite.csv'% os.getcwd(),
-                '%s/human/M1/treeavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/NP/treeavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/M1/treeavemutationpersite.csv'% os.getcwd(),        
-                )
-
     trunkoutfiles = (
-                '%s/human/NP/trunkavemutationpersite.csv'% os.getcwd(),
-                '%s/human/M1/trunkavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/NP/trunkavemutationpersite.csv'% os.getcwd(),
-                '%s/swine/M1/trunkavemutationpersite.csv'% os.getcwd(),
+                '%s/human/NP/trunksubidentityandbranchlength.csv'% os.getcwd(),
+                '%s/human/M1/trunksubidentityandbranchlength.csv'% os.getcwd(),
+                '%s/swine/NP/trunksubidentityandbranchlength.csv'% os.getcwd(),
+                '%s/swine/M1/trunksubidentityandbranchlength.csv'% os.getcwd(),
+                )
+    trunkoutfiles2 = (
+                '%s/human/NP/trunksubidentityandlocation.csv'% os.getcwd(),
+                '%s/human/M1/trunksubidentityandlocation.csv'% os.getcwd(),
+                '%s/swine/NP/trunksubidentityandlocation.csv'% os.getcwd(),
+                '%s/swine/M1/trunksubidentityandlocation.csv'% os.getcwd(),
                 )
 
-
-    align_datainput = list(zip(treefiles,treeoutfiles,trunkoutfiles)) 
+    align_datainput = list(zip(treefiles,trunkoutfiles,trunkoutfiles2)) 
     for entry in align_datainput:
         print entry[0]
         findnodeandlength = True
@@ -282,11 +354,17 @@ def main():
 
         trunkmutations = True
         if trunkmutations:
-            trunkmutations = getmutationsites(trunk)
+            trunkmutations = getmutationsites(trunk,entry[1])
 
-        trunkmutationspersitefile = True
+        trunkmutationspersitefile = False
         if trunkmutationspersitefile:
-            writeresults = writeoutfile(trunkmutations,entry[2], sequencelength)
+            writeresults = writeoutfile(trunkmutations,entry[1], sequencelength)
+
+        findconsensussub = False
+        if findconsensussub:
+            consensussub= consensustrunksub(entry[1],entry[2])
+
+        
 
 
 
