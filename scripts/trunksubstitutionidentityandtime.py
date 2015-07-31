@@ -31,6 +31,7 @@ import Bio.Phylo
 from StringIO import StringIO
 import sys
 import re
+import numpy as np
 
 def findlengthandterminalnode(tree):
     '''
@@ -228,6 +229,7 @@ def getmutationsites(paths,outfile):
 def consensustrunksub(subfile,consensusoutfile):
     #print 'reading from subsummaryfile'
     mastersublist = []
+    duplicationcounts = {}
     from collections import defaultdict
     sitedict = defaultdict(list)
     #consensussublist = {}
@@ -245,22 +247,86 @@ def consensustrunksub(subfile,consensusoutfile):
     cutoff = float(count)*.9
     print "cutoff: %s" % cutoff
     for tree in mastersublist:
-        print "sub in tree: %s" % tree
-        #checkforduplicationslist = []
+
         for substitutions in tree:
-            print "substitution level %s" % substitutions
+            #print "substitution level %s" % substitutions
+            duplicationsinsingletree = []
             checkforduplicationslist = []
             #print substitution
             subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
             for indivsub in subinfo:
                 checkforduplicationslist.append(indivsub[0])
-                #print indivsub[0], indivsub[1]
-                sitedict[indivsub[0]].append(indivsub[1])
-            #print 'length duplist %s' % len(checkforduplicationslist)
+            from collections import Counter 
+            dup =  [k for k,v in Counter(checkforduplicationslist).items() if v>1]       
+            if len(dup) >0:
+                #print dup
+                for mut in dup:
+                    if mut not in duplicationcounts:
+                        duplicationcounts[mut] = 1
+                    else:
+                        duplicationcounts[mut]+=1
+            for indivsub in subinfo:
+                if indivsub[0] not in dup:
+                    sitedict[indivsub[0]].append(indivsub[1]) ###move down in script
+    for duplication in duplicationcounts:
+        print duplication, duplicationcounts[duplication]
 
-            from collections import Counter         
-            print [k for k,v in Counter(checkforduplicationslist).items() if v>1]
+    initialsiteaverageblength = {}
+    #find site average branch length discluding any duplications
+    for subidentity in sitedict:
+        blengthtot = 0
+        subnumber = 0
+        for blength in sitedict[subidentity]:
+            blengthtot+=float(blength)
+            subnumber+=1
+        aveblength = float(blengthtot)/subnumber
+        initialsiteaverageblength[subidentity] = aveblength
 
+    #now go back and only include the duplication that is closest to the initial average
+    print 'initial averages'
+    #print initialsiteaverageblength
+    for tree in mastersublist:
+        #print "sub in tree: %s" % tree
+        #checkforduplicationslist = []
+        for substitutions in tree:
+            #print "substitution level %s" % substitutions
+            checkforduplicationslist2 = []
+            singletreebranchlengths = []
+            #print substitution
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
+            for indivsub in subinfo:
+                checkforduplicationslist2.append(indivsub[0])
+                singletreebranchlengths.append(indivsub[1])
+
+            D = defaultdict(list)
+            for i,item in enumerate(checkforduplicationslist2):
+                D[item].append(i)
+            D = {k:v for k,v in D.items() if len(v)>1}  
+            #print D 
+            #print singletreebranchlengths    
+            if len(D) >0:
+                #print dup
+                for mut in D:
+                    distancefromaverage = []
+                    #print mut
+                    for branchl_index in D[mut]:
+                        #print 'entry of dup lengths %s ' % D[mut]
+                    
+                        #print 'average %s ' % initialsiteaverageblength[mut]
+                        #print 'dup length %s ' % singletreebranchlengths[branchl_index]
+                        distfromave = float(initialsiteaverageblength[mut]) - float(singletreebranchlengths[branchl_index])
+                        distancefromaverage.append(abs(distfromave))
+                        #print 'dist from ave %s ' % distfromave
+                    min_dist = np.min(distancefromaverage)
+                   #print min_dist
+                    #print index_for_min_dist
+                    #print sitedict[mut]
+                    #print D[mut][index_for_min_dist]
+                    #print singletreebranchlengths[D[mut][index_for_min_dist]]
+                    sitedict[mut].append(min_dist)
+                    #sitedict[mut].append(singletreebranchlengths[D[mut][index_for_min_dist]])
+                    #print sitedict[mut]
+    finaldict = {}                
     for subidentity in sitedict:
         if len(sitedict[subidentity]) > cutoff:
             #print subidentity, sitedict[subidentity]
@@ -270,20 +336,17 @@ def consensustrunksub(subfile,consensusoutfile):
                 blengthtot+=float(blength)
                 subnumber+=1
             aveblength = float(blengthtot)/subnumber
+            finaldict[subidentity] = aveblength
 
-            fx.write('%s:%s\n' % (subidentity, aveblength))
+
+            #fx.write('%s:%s\n' % (subidentity, aveblength))
         else:
             continue
-            #print "not consensus %s %s %s" % (subidentity, sitedict[subidentity], len(sitedict[subidentity]))
-            #print subinfo
-           # print subinfo[1]
-            #print subinfo[1][1]
-            #print subinfo[2]
-            #sitedict[]
+
+    for w in sorted(finaldict, key=finaldict.get, reverse=True):
+        fx.write('%s:%s\n' % (w, finaldict[w]))
     fx.close()
     
-
-
 def writeoutfile(aadict, outfile, lengthprot):
     '''
     This function writes the results of the average number of substitutions per site to a csv file *outfile*. 
@@ -303,6 +366,177 @@ def writeoutfile(aadict, outfile, lengthprot):
             f.write('%s,%s\n' %(aa, aadict[str(aa)]))
     f.close()
 
+def consensustrunksubswinenp(subfile,consensusoutfile):
+    #print 'reading from subsummaryfile'
+    mastersublist = []
+    duplicationcounts = {}
+    from collections import defaultdict
+    sitedict = defaultdict(list)
+    #consensussublist = {}
+    f= open(subfile,'r')
+    fx = open(consensusoutfile,'w')
+    count = 0
+    with f as allsubfile:
+        for line in allsubfile:
+            count+=1
+            entry = line.strip().split()
+            #print entry
+            mastersublist.append(entry)
+    f.close()
+
+    S473N_high = []
+    S473N_low = []
+
+    cutoff = float(count)*.9
+    print "cutoff: %s" % cutoff
+    for tree in mastersublist:
+
+        for substitutions in tree:
+            #print "substitution level %s" % substitutions
+            duplicationsinsingletree = []
+            checkforduplicationslist = []
+            #print substitution
+            counthigh=0
+            countlow=0
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
+            for indivsub in subinfo:
+   
+                if indivsub[0] == 'S473N':
+                    if float(indivsub[1]) > 30:
+                        counthigh+=1
+                        S473N_high.append(float(indivsub[1]))
+                    else:
+                        countlow+=1
+
+                        S473N_low.append(float(indivsub[1]))
+            if countlow >=2:
+                print 'more than 2 low'
+            if counthigh >=2:
+                print 'more than 2 high' 
+    #print S473N_high
+    print len(S473N_high)
+    print len(S473N_low)
+    print np.min(S473N_high) 
+            
+    print np.max(S473N_high)
+    print np.min(S473N_low) 
+    print np.max(S473N_low)
+    print 'means'
+    print np.mean(S473N_high)
+    print np.mean(S473N_low)
+
+    #fx.write('S473N:%s\n' % (np.mean(S473N_high)))
+    #fx.write('S473N:%s\n' % (np.mean(S473N_low)))
+                    #print indivsub[1]
+
+
+    for tree in mastersublist:
+
+        for substitutions in tree:
+            #print "substitution level %s" % substitutions
+            duplicationsinsingletree = []
+            checkforduplicationslist = []
+            #print substitution
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
+            for indivsub in subinfo:
+                checkforduplicationslist.append(indivsub[0])
+            from collections import Counter 
+            dup =  [k for k,v in Counter(checkforduplicationslist).items() if v>1]       
+            if len(dup) >0:
+                #print dup
+                for mut in dup:
+                    if mut not in duplicationcounts:
+                        duplicationcounts[mut] = 1
+                    else:
+                        duplicationcounts[mut]+=1
+            for indivsub in subinfo:
+                if indivsub[0] not in dup:
+                    sitedict[indivsub[0]].append(indivsub[1]) ###move down in script
+    for duplication in duplicationcounts:
+        print duplication, duplicationcounts[duplication]
+
+    initialsiteaverageblength = {}
+    #find site average branch length discluding any duplications
+    for subidentity in sitedict:
+        blengthtot = 0
+        subnumber = 0
+        for blength in sitedict[subidentity]:
+            blengthtot+=float(blength)
+            subnumber+=1
+        aveblength = float(blengthtot)/subnumber
+        initialsiteaverageblength[subidentity] = aveblength
+
+    #now go back and only include the duplication that is closest to the initial average
+    print 'initial averages'
+   # print initialsiteaverageblength
+    for tree in mastersublist:
+        #print "sub in tree: %s" % tree
+        #checkforduplicationslist = []
+        for substitutions in tree:
+            #print "substitution level %s" % substitutions
+            checkforduplicationslist2 = []
+            singletreebranchlengths = []
+            #print substitution
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", substitutions)
+            for indivsub in subinfo:
+                checkforduplicationslist2.append(indivsub[0])
+                singletreebranchlengths.append(indivsub[1])
+
+            D = defaultdict(list)
+            for i,item in enumerate(checkforduplicationslist2):
+                D[item].append(i)
+            D = {k:v for k,v in D.items() if len(v)>1}  
+            #print D 
+            #print singletreebranchlengths    
+            if len(D) >0:
+                #print dup
+                for mut in D:
+                    distancefromaverage = []
+                    #print mut
+                    for branchl_index in D[mut]:
+                        #print 'entry of dup lengths %s ' % D[mut]
+                    
+                        #print 'average %s ' % initialsiteaverageblength[mut]
+                        #print 'dup length %s ' % singletreebranchlengths[branchl_index]
+                        distfromave = float(initialsiteaverageblength[mut]) - float(singletreebranchlengths[branchl_index])
+                        distancefromaverage.append(abs(distfromave))
+                        #print 'dist from ave %s ' % distfromave
+                    min_dist = np.min(distancefromaverage)
+                    #print min_dist
+                    #print index_for_min_dist
+                    #print sitedict[mut]
+                    #print D[mut][index_for_min_dist]
+                    #print singletreebranchlengths[D[mut][index_for_min_dist]]
+                    sitedict[mut].append(min_dist)
+                    #sitedict[mut].append(singletreebranchlengths[D[mut][index_for_min_dist]])
+                    #print sitedict[mut]
+    finaldict = {}
+    for subidentity in sitedict:
+        if len(sitedict[subidentity]) > cutoff:
+            #print subidentity, sitedict[subidentity]
+            blengthtot = 0
+            subnumber = 0
+            for blength in sitedict[subidentity]:
+                blengthtot+=float(blength)
+                subnumber+=1
+            aveblength = float(blengthtot)/subnumber
+
+            if subidentity != 'S473N':
+                finaldict[subidentity] = aveblength
+
+
+                #fx.write('%s:%s\n' % (subidentity, aveblength))
+        else:
+            continue
+    finaldict['S473N_1'] = np.mean(S473N_high)
+    finaldict['S473N_2'] = np.mean(S473N_low)
+    #fx.write('S473N:%s\n' % (np.mean(S473N_high)))
+    #fx.write('S473N:%s\n' % (np.mean(S473N_low)))
+    for w in sorted(finaldict, key=finaldict.get, reverse=True):
+        fx.write('%s:%s\n' % (w, finaldict[w]))
+        #print w, d[w]
+    fx.close()
+
 def main():
     home = os.path.expanduser("~")
 
@@ -320,39 +554,31 @@ def main():
                 '%s/swine/M1/trunksubidentityandbranchlength.csv'% os.getcwd(),
                 )
     trunkoutfiles2 = (
-                '%s/human/NP/trunksubidentityandlocation.csv'% os.getcwd(),
-                '%s/human/M1/trunksubidentityandlocation.csv'% os.getcwd(),
-                '%s/swine/NP/trunksubidentityandlocation.csv'% os.getcwd(),
-                '%s/swine/M1/trunksubidentityandlocation.csv'% os.getcwd(),
+                '%s/human/NP/trunksubstitutionsummary.csv'% os.getcwd(),
+                '%s/human/M1/trunksubstitutionsummary.csv'% os.getcwd(),
+                '%s/swine/NP/trunksubstitutionsummary.csv'% os.getcwd(),
+                '%s/swine/M1/trunksubstitutionsummary.csv'% os.getcwd(),
                 )
 
     align_datainput = list(zip(treefiles,trunkoutfiles,trunkoutfiles2)) 
     for entry in align_datainput:
         print entry[0]
-        findnodeandlength = True
+        findnodeandlength = False
         if findnodeandlength:
             terminalnode, sequencelength = findlengthandterminalnode(entry[0])
-        getnodedict = True
+        getnodedict = False
         if getnodedict:
             nodedict,lastnode = gettaxanamedict(entry[0],terminalnode)
         
-        treeformat = True
+        treeformat = False
         if treeformat:
             swaptree = formattree(entry[0], nodedict)     
 
-        treemutations = False
-        if treemutations:
-            treemutations = getmutationsites(swaptree)
-
-        treemutationspersitefile = False
-        if treemutationspersitefile:
-            writeresults = writeoutfile(treemutations,entry[1], sequencelength)
-
-        tracetrunks = True
+        tracetrunks = False
         if tracetrunks:
             trunk = tracetrunkfromlist(swaptree, lastnode)
 
-        trunkmutations = True
+        trunkmutations = False
         if trunkmutations:
             trunkmutations = getmutationsites(trunk,entry[1])
 
@@ -360,9 +586,12 @@ def main():
         if trunkmutationspersitefile:
             writeresults = writeoutfile(trunkmutations,entry[1], sequencelength)
 
-        findconsensussub = False
+        findconsensussub = True
         if findconsensussub:
-            consensussub= consensustrunksub(entry[1],entry[2])
+            if entry[0] == '%s/swine/NP/prot_aligned.trees' % os.getcwd():
+                consensusswinenp = consensustrunksubswinenp(entry[1],entry[2])
+            else:
+                consensussub= consensustrunksub(entry[1],entry[2])
 
         
 
