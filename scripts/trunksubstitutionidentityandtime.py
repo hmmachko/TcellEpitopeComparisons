@@ -1,18 +1,22 @@
 '''
-This script calculates the average number of substititutions at each site in a protein from a BEAST trees file. 
-This is done for the entire tree as well as the trunk of the tree.This analysis was done for M1 and NP for 
-human and swine influenza. It assumes a 10% burn-in.
+This script summarizes the substitutions that occur along the trunk of at least 90% of the BEAST trees (excluding the 10% burnin), and the year that the substition occured. 
+If there is a substitution that happens twice in a few trees, we take the substitution branch length that is closest to the average branch length 
+calculated from all of the trees that only had a single occurance of that substitution. There is one substitution that occurs twice:
+swine NP S473N (which occur at very different times), and is separated by if it occurs above or below a branch length of 30.   
+This also converts branch length to year. The last year is 2013 for all lineages. The branch length is subtracted from the year and the resulting
+year is taken (year is rounded down).
 
 Functions
 -----------
 *``findlengthandterminalnode`` : creates sbatch file
 *``gettaxanamedict`` : creates dictionary for replacement taxa names
 *``formattree`` : formats tree to newick format so that Bio.Phylo works 
-*``readtree`` : uses Bio.Phylo to read newick tree
 *``tracetrunk`` : uses Bio.Phylo to trace trunk of last time-stamped taxa to root of tree
 *``tracetrunkfromlist`` : performs tracetrunk on a list
 *``getmutationsites`` : finds average number of mutations that occur along the tree or trunk
-*``writeoutfile`` : writes results 
+*``consensustrunksub`` : records substitutions that occur along the trunk of at least 90% of the trees
+*``consensustrunksubswinenp`` : records substitutions that occur along the trunk of at least 90% of the trees for swine NP, which has a substitution that occurs twice.
+*``convertbranchlengthtoyear`` : converts the branch length to the year and records substitution and year for supplemental file
 
 Input files
 -------------
@@ -22,6 +26,9 @@ Output files
 -------------
 *``treeavemutationpersite.csv`` : average mutations at each site for entire tree
 *``trunkavemutationpersite.csv`` : average mutations at each site for trunk
+*``trunksubidentityandbranchlength.csv``: all trunk substitutions and corresponding branch length for each tree
+*``trunksubstitutionsummary.csv`` : trunk substitutions that occur in at least 90% of trees and branch length
+*``trunksubstitutionyearsummary.csv`` : trunk substitions that occur in at least 90% of trees and year
 
 '''
 
@@ -204,29 +211,18 @@ def getmutationsites(paths,outfile):
         #print findsubs
         for subinfo in findsubs:
 
-            #print subinfo
-            #print subinfo[1]
-            #print subinfo[2]
-            #print subinfo[3]
-            #print subinfo[4]
             f.write('%s%s%s:%s,' % (subinfo[3],subinfo[1],subinfo[4],subinfo[2]))
         f.write('\n')
 
     f.close()
-        #print re.findall("(\{([\d]*),([\d]*.[\d]*),(\w),(\w)})", path)
-        #for matchobj,aminoacidpos in re.findall("(\{([\d]*),([\d]*.[\d]*),)", path):
-            #for matchobj,aminoacidpos in re.findall("(\{([\d]*),([\d]*),(\w),(\w)})", path):
-            #print matchobj
-           # print aminoacidpos
-           # if aminoacidpos not in aa_dict:
-             #   aa_dict[aminoacidpos] = 1
-            #elif aminoacidpos in aa_dict:
-               # aa_dict[aminoacidpos] += 1
-    #for aminoacid in aa_dict:
-       # aa_dict[aminoacid] = float(aa_dict[aminoacid])/count
-       # print aminoacid, aa_dict[aminoacid]
-    #return aa_dict
+
 def consensustrunksub(subfile,consensusoutfile):
+    '''
+    this function takes a *subfile*, which is a file where each line contains all of the substitutions that occur along the trunk of
+    a BEAST tree. The format is like this: A45G:25.4 (where the number after the colon is the branchlength). 
+    This function then determines which substitutions occur in at least 90% of trees, and records them in *conesnsusoutfile* in the same format
+    as above. 
+    ''' 
     #print 'reading from subsummaryfile'
     mastersublist = []
     duplicationcounts = {}
@@ -347,24 +343,7 @@ def consensustrunksub(subfile,consensusoutfile):
         fx.write('%s:%s\n' % (w, finaldict[w]))
     fx.close()
     
-def writeoutfile(aadict, outfile, lengthprot):
-    '''
-    This function writes the results of the average number of substitutions per site to a csv file *outfile*. 
-    *aadict* is a dictionary with amino acid as the key and average number of substitutions as the key. The oufile has 
-    a titleline: site, avemutation. Each subsequent line has an amino acid number and the corresponding number of mutations. 
-    *lengthprot* is used because if there were no mutations, that site is not in the dictionary, so the value is recorded as
-    0 in the outfile. 
-    '''
 
-    f = open(outfile, 'w')
-    f.write('site,avemutation\n')
-    for aa in range(lengthprot):
-        aa += 1
-        if str(aa) not in aadict:
-            f.write('%s,0\n' %(aa))
-        else:
-            f.write('%s,%s\n' %(aa, aadict[str(aa)]))
-    f.close()
 
 def consensustrunksubswinenp(subfile,consensusoutfile):
     #print 'reading from subsummaryfile'
@@ -533,9 +512,59 @@ def consensustrunksubswinenp(subfile,consensusoutfile):
     #fx.write('S473N:%s\n' % (np.mean(S473N_high)))
     #fx.write('S473N:%s\n' % (np.mean(S473N_low)))
     for w in sorted(finaldict, key=finaldict.get, reverse=True):
-        fx.write('%s:%s\n' % (w, finaldict[w]))
+        if w == 'S473N_1':
+            fx.write('S473N:%s\n' % (finaldict[w]))
+        elif w == 'S473N_2':
+            fx.write('S473N:%s\n' % (finaldict[w]))
+        else:
+            fx.write('%s:%s\n' % (w, finaldict[w]))
         #print w, d[w]
     fx.close()
+
+def convertbranchlengthtoyear(infile,outfile):
+    
+    mostrecent = 2013
+    listsubandyear = []
+
+    f= open(infile, 'r')
+    fx=open(outfile, 'w')
+    with f as subfile:
+        for line in subfile:
+            entry = line.strip().split()
+            entry = str(entry)
+            subinfo = re.findall("([\w\d]*):([\d]*.[\d]*)", entry)
+            for indivsub in subinfo:
+                year = mostrecent - float(indivsub[1])
+                fx.write('%s,%d\n' % (indivsub[0], int(year)))
+                listsubandyear.append([indivsub[0],year])
+
+
+    f.close()
+    fx.close()
+    return listsubandyear
+
+def combinefiles(humanM1, humanNP, swineM1,swineNP, outfile):
+    f= open(outfile, 'w')
+    f.write('summary of substitutions that occur along the trunk of at least 90% of trees\n\n')
+    f.write('human influenza M1 substitution,year,,human influenza NP substitution,year,,swine influenza M1 substitution,year,,swine influenza NP substitution,year\n')
+    for i, entry in enumerate(humanNP):
+        print i,entry
+        if i <=(len(humanM1)-1):
+            f.write('%s,%s,,' % (humanM1[i][0],int(humanM1[i][1])))
+        else:
+            f.write(',,,')
+        f.write('%s,%s,,' % (humanNP[i][0],int(humanNP[i][1])))
+        if i <=(len(swineM1)-1):
+            f.write('%s,%s,,' % (swineM1[i][0],int(swineM1[i][1])))
+        else:
+            f.write(',,,')
+        if i <=(len(swineNP)-1):
+            f.write('%s,%s,,\n' % (swineNP[i][0],int(swineNP[i][1])))
+        else:
+            f.write(',,,\n')
+
+
+
 
 def main():
     home = os.path.expanduser("~")
@@ -559,8 +588,14 @@ def main():
                 '%s/swine/NP/trunksubstitutionsummary.csv'% os.getcwd(),
                 '%s/swine/M1/trunksubstitutionsummary.csv'% os.getcwd(),
                 )
+    trunkoutfileswithyear = (
+                '%s/human/NP/trunksubstitutionyearsummary.csv'% os.getcwd(),
+                '%s/human/M1/trunksubstitutionyearsummary.csv'% os.getcwd(),
+                '%s/swine/NP/trunksubstitutionyearsummary.csv'% os.getcwd(),
+                '%s/swine/M1/trunksubstitutionyearsummary.csv'% os.getcwd(),
+        )
 
-    align_datainput = list(zip(treefiles,trunkoutfiles,trunkoutfiles2)) 
+    align_datainput = list(zip(treefiles,trunkoutfiles,trunkoutfiles2,trunkoutfileswithyear)) 
     for entry in align_datainput:
         print entry[0]
         findnodeandlength = False
@@ -582,16 +617,24 @@ def main():
         if trunkmutations:
             trunkmutations = getmutationsites(trunk,entry[1])
 
-        trunkmutationspersitefile = False
-        if trunkmutationspersitefile:
-            writeresults = writeoutfile(trunkmutations,entry[1], sequencelength)
 
-        findconsensussub = True
+        findconsensussub = False
         if findconsensussub:
             if entry[0] == '%s/swine/NP/prot_aligned.trees' % os.getcwd():
                 consensusswinenp = consensustrunksubswinenp(entry[1],entry[2])
             else:
                 consensussub= consensustrunksub(entry[1],entry[2])
+    converttoyear=True
+    if converttoyear:
+        humanM1 = convertbranchlengthtoyear('%s/human/M1/trunksubstitutionsummary.csv'% os.getcwd(),'%s/human/M1/trunksubstitutionyearsummary.csv'% os.getcwd())
+        humanNP = convertbranchlengthtoyear('%s/human/NP/trunksubstitutionsummary.csv'% os.getcwd(), '%s/human/NP/trunksubstitutionyearsummary.csv'% os.getcwd())
+        swineM1 = convertbranchlengthtoyear('%s/swine/M1/trunksubstitutionsummary.csv'% os.getcwd(),'%s/swine/M1/trunksubstitutionyearsummary.csv'% os.getcwd())
+        swineNP = convertbranchlengthtoyear('%s/swine/NP/trunksubstitutionsummary.csv'% os.getcwd(),'%s/swine/NP/trunksubstitutionyearsummary.csv'% os.getcwd())
+
+    combfile=True
+    if combfile:
+        combinedsummaryfile = '%s/plots/S9_trunksubstitutionsummary.csv' % os.getcwd()
+        combinefiles(humanM1, humanNP, swineM1,swineNP, combinedsummaryfile)  
 
         
 
